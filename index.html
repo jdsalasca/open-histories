@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>open-histories · La repisa</title>
+<meta name="description" content="Cuentos clásicos de dominio público, completos y animados en papercraft.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,500;1,700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shelf.css">
+</head>
+<body>
+<header>
+  <h1>open<i>-</i>histories</h1>
+  <p>Una repisa de cuentos clásicos de <b>dominio público</b>, completos, en español y animados en papel recortado. Toca un libro para abrirlo.</p>
+</header>
+
+<main class="room">
+  <div class="case" id="case"></div>
+</main>
+
+<p class="foot">
+  Textos originales en dominio público · traducciones y arte bajo <a href="https://creativecommons.org/licenses/by/4.0/deed.es">CC BY 4.0</a> · código MIT.<br>
+  ¿Quieres sumar un cuento? Mira <a href="https://github.com/jdsalasca/open-histories/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.
+</p>
+
+<script>
+/* catálogo de la repisa. soon:true = todavía no está en la repisa */
+const BOOKS = [
+  { id:'perico-conejo',    t:'Perico, el conejo travieso', a:'Beatrix Potter', y:1902, c:'#4d7a4f', tip:'Una huerta prohibida y un abrigo azul.', e:'rabbit' },
+  { id:'gigante-egoista',  t:'El Gigante Egoísta',         a:'Oscar Wilde',    y:1888, c:'#7a4fa0', tip:'Un muro, un invierno eterno y un niño.', e:'giant' },
+  { id:'principe-feliz',   t:'El Príncipe Feliz',          a:'Oscar Wilde',    y:1888, c:'#c28a2b', soon:1, e:'prince' },
+  { id:'ruisenor-rosa',    t:'El Ruiseñor y la Rosa',      a:'Oscar Wilde',    y:1888, c:'#a82f46', soon:1, e:'rose' },
+  { id:'fosforos',         t:'La niña de los fósforos',    a:'H. C. Andersen', y:1845, c:'#35508f', soon:1, e:'match' },
+  { id:'caperucita-roja',  t:'Caperucita Roja',            a:'Hermanos Grimm', y:1812, c:'#9b3a3a', soon:1, e:'hood' }
+];
+const E = {
+  rabbit:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#bfe3ff"/><path d="M0,86 Q60,66 120,86 V112 H0Z" fill="#7fbf6e"/><polygon points="20,86 36,40 52,86" fill="#3d7d5a"/><ellipse cx="78" cy="84" rx="20" ry="15" fill="#b9926a"/><circle cx="92" cy="68" r="11" fill="#b9926a"/><ellipse cx="88" cy="46" rx="4" ry="15" fill="#b9926a"/><ellipse cx="97" cy="47" rx="4" ry="15" fill="#b9926a" transform="rotate(10 97 47)"/><path d="M62,82 Q66,66 80,70 L82,92 Q64,94 62,82Z" fill="#2e5fbf"/><circle cx="96" cy="66" r="2" fill="#3a2a1a"/></svg>`,
+  giant:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#d8f0ff"/><path d="M0,88 Q60,70 120,88 V112 H0Z" fill="#8fcf7a"/><g fill="#e8a9b8"><circle cx="24" cy="62" r="18"/><circle cx="104" cy="66" r="16"/></g><rect x="21" y="70" width="6" height="26" fill="#7a5230"/><rect x="101" y="74" width="6" height="24" fill="#7a5230"/><path d="M46,100 L52,52 H78 L84,100Z" fill="#7a4fa0"/><circle cx="65" cy="42" r="13" fill="#f0c8a0"/><path d="M52,44 Q52,66 65,68 Q78,66 78,44 Q72,56 65,56 Q58,56 52,44Z" fill="#8b6a43"/></svg>`,
+  prince:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#1d2a5c"/><circle cx="96" cy="22" r="10" fill="#fbf0c9"/><polygon points="20,18 22,24 28,24 23,28 25,34 20,30 15,34 17,28 12,24 18,24" fill="#ffe08a"/><rect x="46" y="62" width="28" height="50" fill="#b4b9cc"/><path d="M50,62 L54,30 H66 L70,62Z" fill="#e9b942"/><circle cx="60" cy="22" r="9" fill="#f7d878"/><circle cx="57" cy="22" r="2" fill="#2e5fbf"/><circle cx="63" cy="22" r="2" fill="#2e5fbf"/><circle cx="72" cy="40" r="3.5" fill="#c0283f"/></svg>`,
+  rose:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2a2150"/><circle cx="26" cy="26" r="12" fill="#fbf0c9"/><path d="M60,112 V58" stroke="#4f8f4a" stroke-width="5"/><circle cx="60" cy="48" r="20" fill="#c0283f"/><circle cx="60" cy="48" r="12" fill="#a82f46"/><circle cx="60" cy="48" r="5" fill="#7d1f33"/><path d="M60,88 l16,-8 l-4,12z" fill="#4f8f4a"/></svg>`,
+  match:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#27304f"/><g fill="#fff">${[[14,10],[40,30],[96,18],[78,50],[24,60],[104,70]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.4"/>`).join('')}</g><rect x="56" y="48" width="5" height="48" fill="#e9d8b4" transform="rotate(14 58 70)"/><ellipse cx="68" cy="42" rx="9" ry="14" fill="#ffb347"/><ellipse cx="68" cy="46" rx="4" ry="8" fill="#fff0a8"/><path d="M0,100 Q60,90 120,100 V112 H0Z" fill="#f4f7fb"/></svg>`,
+  hood:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2f5d44"/><polygon points="14,100 28,40 42,100" fill="#1f3a34"/><polygon points="86,100 100,30 114,100" fill="#1f3a34"/><path d="M48,100 L54,64 H72 L78,100Z" fill="#f4eee0"/><path d="M50,80 L63,60 L76,80Z" fill="#c0283f"/><circle cx="63" cy="52" r="11" fill="#f2c9a0"/><path d="M50,54 Q48,32 63,32 Q78,32 76,54 Q70,44 63,44 Q56,44 50,54Z" fill="#c0283f"/></svg>`
+};
+const book = b => {
+  const inner = `<span class="cover" style="background-color:${b.c}"><span class="emb">${E[b.e]}</span><b>${b.t}</b><small>${b.a}${b.y ? ' · ' + b.y : ''}</small></span>${b.tip ? `<span class="bubble">${b.tip}</span>` : ''}`;
+  return b.soon ? `<span class="book soon" aria-label="${b.t} (próximamente)">${inner}</span>`
+                : `<a class="book" href="read.html?s=${b.id}" aria-label="Abrir ${b.t}">${inner}</a>`;
+};
+const plant = `<svg class="deco" width="70" height="120" viewBox="0 0 70 120"><g class="sway"><path d="M35,100 C30,70 20,50 10,30 M35,100 C38,66 48,48 60,26 M35,100 V20" stroke="#4f8f4a" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="30" rx="10" ry="16" fill="#6bb35f" transform="rotate(-24 10 30)"/><ellipse cx="60" cy="26" rx="10" ry="16" fill="#6bb35f" transform="rotate(24 60 26)"/><ellipse cx="35" cy="18" rx="9" ry="17" fill="#7cc46f"/></g><path d="M18,100 H52 L48,120 H22Z" fill="#c0653a"/></svg>`;
+const lamp = `<svg class="deco" width="60" height="90" viewBox="0 0 60 90"><rect x="28" y="40" width="4" height="40" fill="#7a5230"/><rect x="14" y="78" width="32" height="10" rx="3" fill="#7a5230"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#ffd36b"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#fff" opacity=".25"/></svg>`;
+const shelves = [BOOKS.slice(0, 3), BOOKS.slice(3)];
+document.getElementById('case').innerHTML = shelves.map((row, i) => `<div class="shelf">${i ? lamp : plant}${row.map(book).join('')}${i ? plant : lamp}</div>`).join('');
+</script>
+</body>
+</html>

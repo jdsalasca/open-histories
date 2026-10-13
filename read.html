@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>open-histories · Leyendo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,500;1,700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/book.css">
+</head>
+<body>
+<main class="book" id="book">
+  <div class="topbar">
+    <span><a class="back" href="index.html">← La repisa</a> &nbsp;·&nbsp; <span id="bookTitle"></span></span>
+    <span class="r"><button class="snd" id="snd" aria-pressed="true">🔊 Sonido</button><span id="pageNum">Portada</span></span>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="stage" id="stage"></div>
+  <div class="nav">
+    <button class="btn" id="prev">← Atrás</button>
+    <div class="dots" id="dots" role="tablist" aria-label="Páginas"></div>
+    <button class="btn" id="next">Siguiente →</button>
+  </div>
+</main>
+<noscript><p style="text-align:center">Este libro necesita JavaScript para animarse.</p></noscript>
+<script src="assets/kit.js"></script>
+<script src="assets/reader.js"></script>
+</body>
+</html>
