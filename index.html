@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>open-histories · La repisa</title>
-<meta name="description" content="Cuentos clásicos de dominio público, completos y animados en papercraft.">
+<meta name="description" content="Cuentos clásicos de dominio público, completos y animados en papercraft. Con rincón de terror para Halloween.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,500;1,700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/shelf.css">
@@ -15,9 +15,15 @@
   <p>Una repisa de cuentos clásicos de <b>dominio público</b>, completos, en español y animados en papel recortado. Toca un libro para abrirlo.</p>
 </header>
 
-<main class="room">
-  <div class="case" id="case"></div>
-</main>
+<h2 class="sec">Para leer de día <small>cuentos y fábulas</small></h2>
+<main class="room"><div class="case" id="day"></div></main>
+
+<section class="terror-wrap" aria-label="Rincón del terror">
+  <svg class="fly" width="70" height="40" viewBox="-40 -20 80 40" aria-hidden="true"><g fill="#0b0716"><ellipse rx="6" ry="8"/><g class="w"><path d="M-5,-2 Q-22,-20 -38,-4 Q-30,-6 -26,2 Q-20,-4 -16,6 Q-10,0 -5,6Z"/><path d="M5,-2 Q22,-20 38,-4 Q30,-6 26,2 Q20,-4 16,6 Q10,0 5,6Z"/></g></g><circle cx="-2" cy="-2" r="1.1" fill="#ffd36b"/><circle cx="2" cy="-2" r="1.1" fill="#ffd36b"/></svg>
+  <h2 class="sec">🎃 Rincón del terror <small>solo para lectores valientes</small></h2>
+  <main class="room"><div class="case terror" id="night"></div></main>
+  <p class="foot-note">Clásicos del miedo, completos y sin recortes. Recomendados desde los 12 años.</p>
+</section>
 
 <p class="foot">
   Textos originales en dominio público · traducciones y arte bajo <a href="https://creativecommons.org/licenses/by/4.0/deed.es">CC BY 4.0</a> · código MIT.<br>
@@ -26,7 +32,7 @@
 
 <script>
 /* catálogo de la repisa. soon:true = todavía no está en la repisa */
-const BOOKS = [
+const DAY = [
   { id:'perico-conejo',    t:'Perico, el conejo travieso', a:'Beatrix Potter', y:1902, c:'#4d7a4f', tip:'Una huerta prohibida y un abrigo azul.', e:'rabbit' },
   { id:'gigante-egoista',  t:'El Gigante Egoísta',         a:'Oscar Wilde',    y:1888, c:'#7a4fa0', tip:'Un muro, un invierno eterno y un niño.', e:'giant' },
   { id:'principe-feliz',   t:'El Príncipe Feliz',          a:'Oscar Wilde',    y:1888, c:'#c28a2b', soon:1, e:'prince' },
@@ -34,23 +40,39 @@ const BOOKS = [
   { id:'fosforos',         t:'La niña de los fósforos',    a:'H. C. Andersen', y:1845, c:'#35508f', soon:1, e:'match' },
   { id:'caperucita-roja',  t:'Caperucita Roja',            a:'Hermanos Grimm', y:1812, c:'#9b3a3a', soon:1, e:'hood' }
 ];
+const NIGHT = [
+  { id:'corazon-delator',  t:'El corazón delator',         a:'Edgar Allan Poe', y:1843, c:'#2b2147', tip:'¿Oyes ese latido? Nadie más lo oye.', e:'eye', dark:1, age:1 },
+  { id:'mascara-muerte',   t:'La máscara de la muerte roja', a:'Edgar Allan Poe', y:1842, c:'#6b1224', soon:1, e:'mask', dark:1, age:1 },
+  { id:'gato-negro',       t:'El gato negro',              a:'Edgar Allan Poe', y:1843, c:'#1d2a2a', soon:1, e:'cat', dark:1, age:1 },
+  { id:'pata-de-mono',     t:'La pata de mono',            a:'W. W. Jacobs',    y:1902, c:'#4a3a1d', soon:1, e:'paw', dark:1, age:1 }
+];
 const E = {
   rabbit:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#bfe3ff"/><path d="M0,86 Q60,66 120,86 V112 H0Z" fill="#7fbf6e"/><polygon points="20,86 36,40 52,86" fill="#3d7d5a"/><ellipse cx="78" cy="84" rx="20" ry="15" fill="#b9926a"/><circle cx="92" cy="68" r="11" fill="#b9926a"/><ellipse cx="88" cy="46" rx="4" ry="15" fill="#b9926a"/><ellipse cx="97" cy="47" rx="4" ry="15" fill="#b9926a" transform="rotate(10 97 47)"/><path d="M62,82 Q66,66 80,70 L82,92 Q64,94 62,82Z" fill="#2e5fbf"/><circle cx="96" cy="66" r="2" fill="#3a2a1a"/></svg>`,
   giant:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#d8f0ff"/><path d="M0,88 Q60,70 120,88 V112 H0Z" fill="#8fcf7a"/><g fill="#e8a9b8"><circle cx="24" cy="62" r="18"/><circle cx="104" cy="66" r="16"/></g><rect x="21" y="70" width="6" height="26" fill="#7a5230"/><rect x="101" y="74" width="6" height="24" fill="#7a5230"/><path d="M46,100 L52,52 H78 L84,100Z" fill="#7a4fa0"/><circle cx="65" cy="42" r="13" fill="#f0c8a0"/><path d="M52,44 Q52,66 65,68 Q78,66 78,44 Q72,56 65,56 Q58,56 52,44Z" fill="#8b6a43"/></svg>`,
   prince:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#1d2a5c"/><circle cx="96" cy="22" r="10" fill="#fbf0c9"/><polygon points="20,18 22,24 28,24 23,28 25,34 20,30 15,34 17,28 12,24 18,24" fill="#ffe08a"/><rect x="46" y="62" width="28" height="50" fill="#b4b9cc"/><path d="M50,62 L54,30 H66 L70,62Z" fill="#e9b942"/><circle cx="60" cy="22" r="9" fill="#f7d878"/><circle cx="57" cy="22" r="2" fill="#2e5fbf"/><circle cx="63" cy="22" r="2" fill="#2e5fbf"/><circle cx="72" cy="40" r="3.5" fill="#c0283f"/></svg>`,
   rose:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2a2150"/><circle cx="26" cy="26" r="12" fill="#fbf0c9"/><path d="M60,112 V58" stroke="#4f8f4a" stroke-width="5"/><circle cx="60" cy="48" r="20" fill="#c0283f"/><circle cx="60" cy="48" r="12" fill="#a82f46"/><circle cx="60" cy="48" r="5" fill="#7d1f33"/><path d="M60,88 l16,-8 l-4,12z" fill="#4f8f4a"/></svg>`,
   match:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#27304f"/><g fill="#fff">${[[14,10],[40,30],[96,18],[78,50],[24,60],[104,70]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.4"/>`).join('')}</g><rect x="56" y="48" width="5" height="48" fill="#e9d8b4" transform="rotate(14 58 70)"/><ellipse cx="68" cy="42" rx="9" ry="14" fill="#ffb347"/><ellipse cx="68" cy="46" rx="4" ry="8" fill="#fff0a8"/><path d="M0,100 Q60,90 120,100 V112 H0Z" fill="#f4f7fb"/></svg>`,
-  hood:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2f5d44"/><polygon points="14,100 28,40 42,100" fill="#1f3a34"/><polygon points="86,100 100,30 114,100" fill="#1f3a34"/><path d="M48,100 L54,64 H72 L78,100Z" fill="#f4eee0"/><path d="M50,80 L63,60 L76,80Z" fill="#c0283f"/><circle cx="63" cy="52" r="11" fill="#f2c9a0"/><path d="M50,54 Q48,32 63,32 Q78,32 76,54 Q70,44 63,44 Q56,44 50,54Z" fill="#c0283f"/></svg>`
+  hood:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2f5d44"/><polygon points="14,100 28,40 42,100" fill="#1f3a34"/><polygon points="86,100 100,30 114,100" fill="#1f3a34"/><path d="M48,100 L54,64 H72 L78,100Z" fill="#f4eee0"/><path d="M50,80 L63,60 L76,80Z" fill="#c0283f"/><circle cx="63" cy="52" r="11" fill="#f2c9a0"/><path d="M50,54 Q48,32 63,32 Q78,32 76,54 Q70,44 63,44 Q56,44 50,54Z" fill="#c0283f"/></svg>`,
+  eye:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#0b0716"/><g fill="#fff">${[[14,10],[100,16],[84,40],[22,50]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1.4"/>`).join('')}</g><circle cx="60" cy="56" r="44" fill="#9ecbff" opacity=".15"/><path d="M12,56 Q60,10 108,56 Q60,102 12,56Z" fill="#e9eef7"/><circle cx="60" cy="56" r="25" fill="#8fb4de"/><circle cx="60" cy="56" r="25" fill="#cfe0f3" opacity=".5"/><circle cx="60" cy="56" r="10" fill="#10131f"/><circle cx="54" cy="50" r="4" fill="#fff"/></svg>`,
+  mask:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2a0a14"/><path d="M30,20 Q60,0 90,20 Q98,60 78,88 Q60,104 42,88 Q22,60 30,20Z" fill="#e8dcc8"/><path d="M40,48 Q48,40 56,48 Q48,54 40,48Z M64,48 Q72,40 80,48 Q72,54 64,48Z" fill="#6b1224"/><path d="M46,78 Q60,88 74,78" stroke="#6b1224" stroke-width="3" fill="none"/><g fill="#c0283f"><circle cx="22" cy="96" r="3"/><circle cx="98" cy="90" r="3"/><circle cx="60" cy="10" r="3"/></g></svg>`,
+  cat:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#10201f"/><circle cx="92" cy="24" r="14" fill="#f4eac0"/><path d="M30,100 Q28,60 44,52 L40,30 L54,42 Q60,40 66,42 L80,30 L76,52 Q92,60 90,100Z" fill="#0a0a10"/><circle cx="52" cy="58" r="4" fill="#ffd36b"/><circle cx="68" cy="58" r="4" fill="#ffd36b"/><path d="M0,100 H120 V112 H0Z" fill="#1f3a34"/></svg>`,
+  paw:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#2a1a0a"/><circle cx="60" cy="56" r="40" fill="#ff7a3c" opacity=".18"/><path d="M40,100 Q36,70 50,56 L46,26 Q50,22 54,28 L58,50 L62,22 Q66,20 68,26 L68,50 L76,28 Q80,28 80,34 L74,56 Q86,70 80,100Z" fill="#8a6a3a"/><path d="M50,60 H74 M52,72 H72 M54,84 H70" stroke="#4a3a1d" stroke-width="2"/></svg>`
 };
 const book = b => {
   const inner = `<span class="cover" style="background-color:${b.c}"><span class="emb">${E[b.e]}</span><b>${b.t}</b><small>${b.a}${b.y ? ' · ' + b.y : ''}</small></span>${b.tip ? `<span class="bubble">${b.tip}</span>` : ''}`;
-  return b.soon ? `<span class="book soon" aria-label="${b.t} (próximamente)">${inner}</span>`
-                : `<a class="book" href="read.html?s=${b.id}" aria-label="Abrir ${b.t}">${inner}</a>`;
+  const cls = 'book' + (b.dark ? ' dark' : '') + (b.age ? ' age' : '');
+  return b.soon ? `<span class="${cls} soon" aria-label="${b.t} (próximamente)">${inner}</span>`
+                : `<a class="${cls}" href="read.html?s=${b.id}" aria-label="Abrir ${b.t}">${inner}</a>`;
 };
 const plant = `<svg class="deco" width="70" height="120" viewBox="0 0 70 120"><g class="sway"><path d="M35,100 C30,70 20,50 10,30 M35,100 C38,66 48,48 60,26 M35,100 V20" stroke="#4f8f4a" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="30" rx="10" ry="16" fill="#6bb35f" transform="rotate(-24 10 30)"/><ellipse cx="60" cy="26" rx="10" ry="16" fill="#6bb35f" transform="rotate(24 60 26)"/><ellipse cx="35" cy="18" rx="9" ry="17" fill="#7cc46f"/></g><path d="M18,100 H52 L48,120 H22Z" fill="#c0653a"/></svg>`;
 const lamp = `<svg class="deco" width="60" height="90" viewBox="0 0 60 90"><rect x="28" y="40" width="4" height="40" fill="#7a5230"/><rect x="14" y="78" width="32" height="10" rx="3" fill="#7a5230"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#ffd36b"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#fff" opacity=".25"/></svg>`;
-const shelves = [BOOKS.slice(0, 3), BOOKS.slice(3)];
-document.getElementById('case').innerHTML = shelves.map((row, i) => `<div class="shelf">${i ? lamp : plant}${row.map(book).join('')}${i ? plant : lamp}</div>`).join('');
+const pumpkin = `<svg class="deco" width="86" height="80" viewBox="-50 -70 100 80"><ellipse cx="0" cy="-30" rx="46" ry="34" fill="#e8742a"/><ellipse cx="-26" cy="-30" rx="22" ry="32" fill="#f08a3c"/><ellipse cx="26" cy="-30" rx="22" ry="32" fill="#f08a3c"/><ellipse cx="0" cy="-30" rx="16" ry="34" fill="#d9621f"/><path d="M-4,-62 q-2,-14 8,-18 l4,4 q-6,4 -4,14Z" fill="#4f6b2a"/><g class="flick"><polygon points="-26,-40 -12,-40 -19,-24" fill="#ffd36b"/><polygon points="12,-40 26,-40 19,-24" fill="#ffd36b"/><path d="M-28,-14 L-18,-22 L-10,-12 L0,-22 L10,-12 L18,-22 L28,-14 L22,-2 L10,-8 L0,-2 L-10,-8 L-22,-2Z" fill="#ffd36b"/></g></svg>`;
+const candle = `<svg class="deco" width="44" height="100" viewBox="-22 -90 44 100"><rect x="-7" y="-46" width="14" height="46" rx="3" fill="#f4eee0"/><path d="M-7,-46 q3,10 7,2 q4,8 7,-2" fill="#f4eee0"/><rect x="-1" y="-54" width="2" height="9" fill="#3a2a1a"/><g class="flick"><circle cx="0" cy="-66" r="20" fill="#ffb347" opacity=".35"/><path d="M0,-52 Q-8,-62 0,-80 Q8,-62 0,-52Z" fill="#ffb347"/><path d="M0,-54 Q-4,-62 0,-72 Q4,-62 0,-54Z" fill="#fff0a8"/></g></svg>`;
+const row = (arr, a, b) => `${a}${arr.map(book).join('')}${b}`;
+document.getElementById('day').innerHTML =
+  `<div class="shelf">${row(DAY.slice(0, 3), plant, lamp)}</div><div class="shelf">${row(DAY.slice(3), lamp, plant)}</div>`;
+document.getElementById('night').innerHTML =
+  `<div class="shelf">${row(NIGHT.slice(0, 2), candle, pumpkin)}</div><div class="shelf">${row(NIGHT.slice(2), pumpkin, candle)}</div>`;
 </script>
 </body>
 </html>

@@ -26,6 +26,7 @@
 
   function start(st) {
     document.title = `${clean(st.title)} · open-histories`;
+    if (st.theme) document.body.classList.add(st.theme);
     document.body.insertAdjacentHTML('afterbegin', K.defs);
     $('#bookTitle').textContent = `${clean(st.title)} · ${st.author}`;
 
@@ -47,6 +48,7 @@
         <div class="copy"><div class="chap">Un cuento de ${st.author}</div><h1 class="cover-title">${titleHTML(st.title)}</h1>
         <p class="byline">${st.tagline || ''}</p>
         <p>${st.intro || ''}</p>
+        ${st.warning ? `<span class="warn">🎃 ${st.warning}</span>` : ''}
         <button class="btn big" data-go="1">Comenzar a leer ✨</button>
         <p class="credit">${st.year ? `Publicado en ${st.year}. ` : ''}Obra en dominio público${st.orig ? ` (<i>${st.orig}</i>)` : ''}. ${st.trans || ''}</p></div>`;
       } else if (p.kind === 'quiz') {
