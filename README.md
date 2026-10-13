@@ -3,7 +3,8 @@
 Una repisa de **cuentos clásicos de dominio público**, completos, en español y animados en **papel recortado** (papercraft).
 Se leen en el navegador: sin instalar nada, sin servidor, sin anuncios.
 
-> Abre `index.html` (o la versión publicada) y toca un libro.
+> **Léelo ahora:** https://library.eridu.top · espejo: https://jdsalasca.github.io/open-histories/
+> o abre `index.html` en local y toca un libro.
 
 ## En la repisa
 
@@ -50,3 +51,9 @@ python -m http.server 8000   # y abre http://localhost:8000
 > Los cuentos se mantienen fieles a sus originales, con el lenguaje de su época.
 
 ¿Quieres sumar un cuento? Lee [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Publicación
+
+- **GitHub Pages**: se publica solo desde `main`.
+- **library.eridu.top**: servidor propio. `./deploy.sh usuario@host:/ruta` copia los archivos estáticos; un servicio
+  de usuario de systemd los sirve y un túnel de Cloudflare propio los expone (independiente de otros sitios del servidor).
