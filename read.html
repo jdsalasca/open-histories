@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>open-histories · Leyendo</title>
 <link rel="stylesheet" href="assets/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e9b942">
 <link rel="stylesheet" href="assets/book.css">
 <link rel="stylesheet" href="assets/panel.css">
 </head>
@@ -31,8 +33,10 @@
 <script src="assets/words.js"></script>
 <script src="assets/kit.js"></script>
 <script src="assets/perf.js"></script>
+<script src="assets/build.js"></script>
+<script src="assets/offline.js"></script>
 <script src="assets/panel.js"></script>
 <script src="assets/reader.js"></script>
-<script>OH.panel.mount(document.querySelector('.topbar .r'));</script>
+<script>OH.panel.mount(document.querySelector('.topbar .r')); OH.offline.register(apply => OH.panel.updateBar(apply));</script>
 </body>
 </html>

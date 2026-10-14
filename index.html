@@ -6,6 +6,8 @@
 <title>open-histories · La repisa</title>
 <meta name="description" content="Cuentos clásicos de dominio público, completos y animados en papercraft. Con rincón de terror para Halloween.">
 <link rel="stylesheet" href="assets/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e9b942">
 <link rel="stylesheet" href="assets/shelf.css">
 <link rel="stylesheet" href="assets/panel.css">
 </head>
@@ -34,6 +36,8 @@
 <script src="assets/settings.js"></script>
 <script src="assets/i18n.js"></script>
 <script src="assets/words.js"></script>
+<script src="assets/build.js"></script>
+<script src="assets/offline.js"></script>
 <script src="assets/panel.js"></script>
 <script>
 /* catálogo de la repisa. soon:true = todavía no está en la repisa */
@@ -54,8 +58,9 @@ const E = {
 const book = b => {
   const inner = `<span class="cover" style="background-color:${b.c}"><span class="emb">${E[b.e]}</span><b>${b.t}</b><small>${b.a}${b.y ? ' · ' + b.y : ''}</small></span>${b.tip ? `<span class="bubble">${b.tip}</span>` : ''}`;
   const cls = 'book' + (b.dark ? ' dark' : '') + (b.age ? ' age' : '');
-  return b.soon ? `<span class="${cls} soon" aria-label="${b.t} (próximamente)">${inner}</span>`
-                : `<a class="${cls}" href="read.html?s=${b.id}" aria-label="Abrir ${b.t}">${inner}</a>`;
+  const attr = `data-id="${b.id}"`;
+  return b.soon ? `<span ${attr} class="${cls} soon" aria-label="${b.t} (próximamente)">${inner}</span>`
+                : `<a ${attr} class="${cls}" href="read.html?s=${b.id}" aria-label="Abrir ${b.t}">${inner}</a>`;
 };
 const plant = `<svg class="deco" width="70" height="120" viewBox="0 0 70 120"><g class="sway"><path d="M35,100 C30,70 20,50 10,30 M35,100 C38,66 48,48 60,26 M35,100 V20" stroke="#4f8f4a" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="30" rx="10" ry="16" fill="#6bb35f" transform="rotate(-24 10 30)"/><ellipse cx="60" cy="26" rx="10" ry="16" fill="#6bb35f" transform="rotate(24 60 26)"/><ellipse cx="35" cy="18" rx="9" ry="17" fill="#7cc46f"/></g><path d="M18,100 H52 L48,120 H22Z" fill="#c0653a"/></svg>`;
 const lamp = `<svg class="deco" width="60" height="90" viewBox="0 0 60 90"><rect x="28" y="40" width="4" height="40" fill="#7a5230"/><rect x="14" y="78" width="32" height="10" rx="3" fill="#7a5230"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#ffd36b"/><path d="M8,40 L18,6 H42 L52,40Z" fill="#fff" opacity=".25"/></svg>`;
@@ -72,6 +77,11 @@ function render() {
   document.getElementById('terrorSec').hidden = !OH.settings.get().terror;
   document.documentElement.lang = lang();
   OH.i18n.apply(document, lang());
+  if (OH.offline && OH.offline.status) OH.offline.status().then(m => {
+    document.querySelectorAll('.book[data-id]').forEach(el => {
+      if (m[el.dataset.id] && !el.querySelector('.offbadge')) el.insertAdjacentHTML('beforeend', '<span class="offbadge" title="offline">✓</span>');
+    });
+  });
 }
 const host = document.createElement('div');
 host.className = 'gear-fixed';
@@ -79,6 +89,7 @@ document.body.appendChild(host);
 OH.panel.mount(host);
 OH.settings.onChange(render);
 render();
+OH.offline.register(apply => OH.panel.updateBar(apply));
 </script>
 </body>
 </html>

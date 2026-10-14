@@ -18,7 +18,7 @@
   function offlineHTML() {
     if (!OH.offline) return '';
     return `<h4>${t('offline')}</h4><p class="pnote" id="offStatus">${OH.offline.isOnline() ? '' : '⚠ '}${t('offline_ready')}</p>
-      <div class="pbtns"><button type="button" class="chip" data-dl="all">⬇ ${t('download_all')}</button></div>`;
+      <div class="pbtns">${OH.currentStory ? `<button type="button" class="chip" data-dl="story">⬇ ${t('download_story')}</button>` : ''}<button type="button" class="chip" data-dl="all">⬇ ${t('download_all')}</button></div>`;
   }
   function bodyHTML() {
     const s = S.get();
@@ -77,7 +77,11 @@
       const del = e.target.closest('[data-del]');
       if (del && OH.words) { OH.words.remove(del.dataset.del); return render(); }
       const dl = e.target.closest('[data-dl]');
-      if (dl && OH.offline) return OH.offline.downloadAll(p => { const el = panel.querySelector('#offStatus'); if (el) el.textContent = `${t('downloading')} ${p.done}/${p.total}`; }).then(render);
+      if (dl && OH.offline) {
+        const prog = (done, total) => { const el = panel.querySelector('#offStatus'); if (el) el.textContent = `${t('downloading')} ${done}/${total}`; };
+        const job = dl.dataset.dl === 'story' ? OH.offline.download([OH.currentStory], prog) : OH.offline.downloadAll(prog);
+        return job.then(() => { render(); const el = panel.querySelector('#offStatus'); if (el) el.textContent = '✓ ' + t('downloaded'); });
+      }
     });
     panel.addEventListener('input', e => {
       const el = e.target.closest('[data-k]'); if (!el) return;
@@ -90,5 +94,14 @@
   }
 
   window.OH = window.OH || {};
-  window.OH.panel = { mount, applyGlobal };
+  /** Barra fija "hay una versión nueva": al tocarla se aplica la actualización. */
+  function updateBar(apply) {
+    if (document.getElementById('updateBar')) return;
+    const b = document.createElement('button');
+    b.id = 'updateBar'; b.type = 'button'; b.className = 'update-bar';
+    b.textContent = I.t('update_available', S.get().lang);
+    b.addEventListener('click', apply);
+    document.body.appendChild(b);
+  }
+  window.OH.panel = { mount, applyGlobal, updateBar };
 })();

@@ -33,3 +33,5 @@ body.dark .wlist li,.terror .wlist li{background:#2a1c3a}
 body.dark .pclose,.terror .pclose,body.dark .gear,.terror .gear{background:#33224a;color:#ecdcff;box-shadow:0 3px 0 #14091f}
 html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-motion="reduce"] *::after{animation:none!important;transition:none!important}
 .gear-fixed{position:fixed;top:12px;right:max(12px,calc(50% - 560px));z-index:55}
+.update-bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:70;border:0;border-radius:999px;padding:10px 18px;background:#e9b942;color:#3a2706;font-weight:800;box-shadow:0 5px 0 #b98a1e,0 10px 18px rgba(0,0,0,.3);cursor:pointer}
+.offbadge{position:absolute;right:-6px;top:-8px;z-index:2;background:#3f8f5a;color:#fff;font-weight:800;font-size:.72rem;padding:2px 7px;border-radius:999px;box-shadow:0 2px 0 #1f4a2d}

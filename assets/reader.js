@@ -32,6 +32,7 @@
 
   async function start(st) {
     document.body.insertAdjacentHTML('afterbegin', K.defs);
+    OH.currentStory = st.id;
     if (st.theme) document.body.classList.add(st.theme);
 
     const pages = [{ kind: 'cover' }, ...st.pages.map(p => ({ kind: 'text', ...p })), { kind: 'quiz' }];
