@@ -30,22 +30,12 @@
   ¿Quieres sumar un cuento? Mira <a href="https://github.com/jdsalasca/open-histories/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.
 </p>
 
+<script src="stories/catalog.js"></script>
 <script>
 /* catálogo de la repisa. soon:true = todavía no está en la repisa */
-const DAY = [
-  { id:'perico-conejo',    t:'Perico, el conejo travieso', a:'Beatrix Potter', y:1902, c:'#4d7a4f', tip:'Una huerta prohibida y un abrigo azul.', e:'rabbit' },
-  { id:'gigante-egoista',  t:'El Gigante Egoísta',         a:'Oscar Wilde',    y:1888, c:'#7a4fa0', tip:'Un muro, un invierno eterno y un niño.', e:'giant' },
-  { id:'principe-feliz',   t:'El Príncipe Feliz',          a:'Oscar Wilde',    y:1888, c:'#c28a2b', tip:'Una estatua de oro y una golondrina que se quedó.', e:'prince' },
-  { id:'ruisenor-rosa',    t:'El Ruiseñor y la Rosa',      a:'Oscar Wilde',    y:1888, c:'#a82f46', soon:1, e:'rose' },
-  { id:'fosforos',         t:'La niña de los fósforos',    a:'H. C. Andersen', y:1845, c:'#35508f', soon:1, e:'match' },
-  { id:'caperucita-roja',  t:'Caperucita Roja',            a:'Hermanos Grimm', y:1812, c:'#9b3a3a', soon:1, e:'hood' }
-];
-const NIGHT = [
-  { id:'corazon-delator',  t:'El corazón delator',         a:'Edgar Allan Poe', y:1843, c:'#2b2147', tip:'¿Oyes ese latido? Nadie más lo oye.', e:'eye', dark:1, age:1 },
-  { id:'mascara-muerte',   t:'La máscara de la muerte roja', a:'Edgar Allan Poe', y:1842, c:'#6b1224', soon:1, e:'mask', dark:1, age:1 },
-  { id:'gato-negro',       t:'El gato negro',              a:'Edgar Allan Poe', y:1843, c:'#1d2a2a', soon:1, e:'cat', dark:1, age:1 },
-  { id:'pata-de-mono',     t:'La pata de mono',            a:'W. W. Jacobs',    y:1902, c:'#4a3a1d', soon:1, e:'paw', dark:1, age:1 }
-];
+const toBook = b => ({ id: b.id, t: b.title.es, a: b.author, y: b.year, c: b.cover.color, tip: b.tip, e: b.cover.emblem, soon: b.soon, dark: b.shelf === 'terror', age: b.age >= 12 });
+const DAY = OH.catalog.filter(b => b.shelf === 'dia').map(toBook);
+const NIGHT = OH.catalog.filter(b => b.shelf === 'terror').map(toBook);
 const E = {
   rabbit:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#bfe3ff"/><path d="M0,86 Q60,66 120,86 V112 H0Z" fill="#7fbf6e"/><polygon points="20,86 36,40 52,86" fill="#3d7d5a"/><ellipse cx="78" cy="84" rx="20" ry="15" fill="#b9926a"/><circle cx="92" cy="68" r="11" fill="#b9926a"/><ellipse cx="88" cy="46" rx="4" ry="15" fill="#b9926a"/><ellipse cx="97" cy="47" rx="4" ry="15" fill="#b9926a" transform="rotate(10 97 47)"/><path d="M62,82 Q66,66 80,70 L82,92 Q64,94 62,82Z" fill="#2e5fbf"/><circle cx="96" cy="66" r="2" fill="#3a2a1a"/></svg>`,
   giant:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#d8f0ff"/><path d="M0,88 Q60,70 120,88 V112 H0Z" fill="#8fcf7a"/><g fill="#e8a9b8"><circle cx="24" cy="62" r="18"/><circle cx="104" cy="66" r="16"/></g><rect x="21" y="70" width="6" height="26" fill="#7a5230"/><rect x="101" y="74" width="6" height="24" fill="#7a5230"/><path d="M46,100 L52,52 H78 L84,100Z" fill="#7a4fa0"/><circle cx="65" cy="42" r="13" fill="#f0c8a0"/><path d="M52,44 Q52,66 65,68 Q78,66 78,44 Q72,56 65,56 Q58,56 52,44Z" fill="#8b6a43"/></svg>`,
