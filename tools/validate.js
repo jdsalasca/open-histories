@@ -22,12 +22,75 @@ function validateCatalog(catalog, fileExists) {
   return errors;
 }
 
-module.exports = { validateCatalog };
+const { rubyCheck } = require('../assets/text.js');
+const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/;
+
+/** Valida un cuento en varios idiomas: {es, zh?, en?} con pages/quiz/glossary. Devuelve lista de errores. */
+function validateStory(id, langs) {
+  const errors = [];
+  const es = langs.es;
+  if (!es || !Array.isArray(es.pages)) return [`${id}: falta el texto base en español`];
+  for (const L of ['zh', 'en']) {
+    const d = langs[L];
+    if (!d) continue;
+    if (typeof d.title !== 'string' || !d.title) errors.push(`${id}: ${L} sin title`);
+    if (!Array.isArray(d.pages)) { errors.push(`${id}: ${L} sin pages`); continue; }
+    if (d.pages.length !== es.pages.length) errors.push(`${id}: ${L} tiene ${d.pages.length} páginas y es tiene ${es.pages.length}`);
+    const n = Math.min(d.pages.length, es.pages.length);
+    for (let i = 0; i < n; i++) {
+      const a = es.pages[i].text || [], b = d.pages[i].text || [];
+      if (a.length !== b.length) errors.push(`${id}: ${L} página ${i + 1} tiene ${b.length} párrafos y es tiene ${a.length}`);
+      if (L === 'zh') {
+        const py = d.pages[i].py;
+        if (!Array.isArray(py) || py.length !== b.length) { errors.push(`${id}: zh página ${i + 1} sin pinyin (py) alineado con text`); continue; }
+        b.forEach((text, j) => {
+          const c = rubyCheck(text, py[j]);
+          if (c.missing || c.leftover) errors.push(`${id}: pinyin desalineado en zh página ${i + 1} párrafo ${j + 1} (faltan ${c.missing}, sobra "${c.leftover}")`);
+        });
+      }
+    }
+    const qa = (es.quiz || []).length, qb = (d.quiz || []).length;
+    if (qa !== qb) errors.push(`${id}: ${L} tiene ${qb} preguntas de quiz y es tiene ${qa}`);
+  }
+  if (langs.zh && Array.isArray(langs.zh.glossary)) {
+    const all = (langs.zh.pages || []).flatMap(p => p.text || []).join('\n');
+    langs.zh.glossary.forEach((g, k) => {
+      if (!g.h || !g.es) errors.push(`${id}: glosario zh #${k + 1} incompleto`);
+      else if (!all.includes(g.h)) errors.push(`${id}: la palabra del glosario "${g.h}" no aparece en el texto zh`);
+      else if (!g.py || !CJK.test(g.h)) errors.push(`${id}: glosario "${g.h}" sin pinyin`);
+    });
+  }
+  return errors;
+}
+
+module.exports = { validateCatalog, validateStory };
+
+/** Carga un cuento (es + idiomas existentes) ejecutando los .js en un contexto aislado. */
+function loadStory(root, entry) {
+  const vm = require('vm');
+  const ctx = vm.createContext({ console });
+  vm.runInContext('var window = globalThis; var document = undefined;', ctx);
+  const run = f => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f });
+  run('assets/kit.js');
+  const out = {};
+  for (const f of entry.files) {
+    const code = f === `${entry.id}.js` ? 'es' : (f.match(/\.(zh|en)\.js$/) || [])[1];
+    if (!code) continue;
+    run(`stories/${f}`);
+    if (code === 'es') { const st = vm.runInContext(`OH.registry['${entry.id}']`, ctx); out.es = st; }
+    else out[code] = vm.runInContext(`OH.langs['${entry.id}']['${code}']`, ctx);
+  }
+  return out;
+}
 
 if (require.main === module) {
   const root = path.resolve(__dirname, '..');
   const catalog = require(path.join(root, 'stories', 'catalog.js'));
-  const errors = validateCatalog(catalog, p => fs.existsSync(path.join(root, p)));
+  let errors = validateCatalog(catalog, p => fs.existsSync(path.join(root, p)));
+  for (const entry of catalog.filter(b => !b.soon)) {
+    try { errors = errors.concat(validateStory(entry.id, loadStory(root, entry))); }
+    catch (e) { errors.push(`${entry.id}: no se pudo cargar (${e.message})`); }
+  }
   if (errors.length) { console.error(errors.join('\n')); process.exit(1); }
-  console.log(`OK: ${catalog.length} libros en el catálogo`);
+  console.log(`OK: ${catalog.length} libros en el catálogo, ${catalog.filter(b => !b.soon).length} validados`);
 }

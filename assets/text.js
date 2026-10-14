@@ -7,8 +7,8 @@
   // letras de pinyin con marcas de tono (Latin-1/Extendido) y marcas combinantes
   const PINYIN_LETTER = /[A-Za-zÀ-ɏḀ-ỿ̀-ͯ]/;
 
-  /** Empareja cada carácter de `text` con su sílaba de `py`; lo que no es chino lleva p:null. Nunca lanza. */
-  function rubyPairs(text, py) {
+  /** Recorre `text` y `py` a la vez. Devuelve los pares y lo que sobra de `py`. Nunca lanza. */
+  function walk(text, py) {
     const s = String(text == null ? '' : text);
     const p = String(py == null ? '' : py);
     let i = 0;
@@ -27,7 +27,16 @@
         out.push({ c, p: null });
       }
     }
-    return out;
+    return { pairs: out, rest: p.slice(i) };
+  }
+  const rubyPairs = (text, py) => walk(text, py).pairs;
+
+  /** Revisa el alineamiento: cuántos caracteres chinos se quedaron sin sílaba y qué pinyin sobra. */
+  function rubyCheck(text, py) {
+    const { pairs, rest } = walk(text, py);
+    const missing = pairs.filter(x => CJK.test(x.c) && !x.p).length;
+    const tail = rest.trim();
+    return { missing, leftover: PINYIN_LETTER.test(tail) ? tail : '' };
   }
 
   /** Divide `text` en trozos; `g` es el índice del glosario si el trozo es una palabra (más larga primero, sin solapes). */
@@ -67,7 +76,7 @@
     return { main, sub, notes };
   }
 
-  const api = { rubyPairs, markGlossary, resolveLangs };
+  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') { window.OH = window.OH || {}; window.OH.text = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

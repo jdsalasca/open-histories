@@ -55,3 +55,11 @@ test('resolve_sub_never_equals_main', () => {
   assert.equal(miss.sub, 'es'); // inglés no existe: cae al idioma base
   assert.ok(miss.notes.some(n => n.startsWith('lang_missing:en')));
 });
+
+const { rubyCheck } = require('../assets/text.js');
+test('rubyCheck_reports_missing_and_leftover_syllables', () => {
+  assert.deepEqual(rubyCheck('小兔子', 'xiǎo tù zi'), { missing: 0, leftover: '' });
+  assert.deepEqual(rubyCheck('小兔子', 'xiǎo tù'), { missing: 1, leftover: '' });
+  assert.equal(rubyCheck('小兔', 'xiǎo tù zi').leftover, 'zi');
+  assert.deepEqual(rubyCheck('HSK1 很好。', 'HSK1 hěn hǎo。'), { missing: 0, leftover: '' });
+});
