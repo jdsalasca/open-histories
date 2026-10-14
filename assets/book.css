@@ -266,3 +266,10 @@ rt{display:none;font-family:var(--sans);font-size:.5em;letter-spacing:.02em;colo
 .v.zhw{border-bottom-style:solid}
 .v.saved::before{content:"⭐";position:absolute;top:-1.3em;left:50%;transform:translateX(-50%);font-size:.6em}
 .terror rt{color:#c9a8ff}.terror .para:hover{background:rgba(190,120,255,.12)}.terror .note-bar{background:#33224a;color:#ecdcff}
+
+/* ── calidad: nivel Baja usa una sombra CSS barata en lugar de filtros SVG ── */
+.pcut{filter:drop-shadow(1px 3px 2px rgba(10,10,30,.5))}
+html[data-q="baja"] .ly,html[data-q="baja"] .page.on .ly{animation:none}
+html[data-q="baja"] .par{transform:none!important}
+html[data-q="baja"] .page.on .art svg{animation:none;will-change:auto}
+html[data-q="media"] .fog,html[data-q="baja"] .fog{display:none}

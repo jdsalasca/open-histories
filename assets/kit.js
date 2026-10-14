@@ -11,9 +11,12 @@
   const hash = s => { let h = 7; for (const c of s) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; return h; };
 
   /* una sola mano de papel: sombra cercana o lejana; los bordes "hierven" a pasos (lo mueve el lector) */
-  const paper = (s, far = false) => `<g filter="url(#${far ? 'paperFar' : 'paper'})">${s}</g>`;
+  /* calidad: 'alta' | 'media' | 'baja' (la fija OH.perf; el lector redibuja al cambiar) */
+  let Q = 'alta';
+  const setQuality = q => { Q = ['alta', 'media', 'baja'].includes(q) ? q : 'alta'; };
+  const paper = (s, far = false) => Q === 'baja' ? `<g class="pcut">${s}</g>` : `<g filter="url(#${far ? 'paperFar' : 'paper'})">${s}</g>`;
   /* capa del diorama: d = retraso de armado (s), k = parallax con el cursor */
-  const ly = (d, k, s) => { const b = k <= 3 ? .9 : k <= 5 ? .5 : 0; return `<g class="ly" style="--d:${d}s"><g class="par" style="--k:${k}${b ? `;filter:blur(${b}px)` : ''}">${s}</g></g>`; };
+  const ly = (d, k, s) => { const b = Q !== 'alta' ? 0 : k <= 3 ? .9 : k <= 5 ? .5 : 0; return `<g class="ly" style="--d:${d}s"><g class="par" style="--k:${k}${b ? `;filter:blur(${b}px)` : ''}">${s}</g></g>`; };
 
   const starPts = (x, y, ro, ri) => { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? ri : ro; p.push((x + r * Math.cos(a)).toFixed(1) + ',' + (y + r * Math.sin(a)).toFixed(1)); } return p.join(' '); };
   const star = (x, y, r, c = '#fff3b0', d = 0) => `<polygon class="tw" style="animation-duration:${(3 + R() * 4).toFixed(1)}s;animation-delay:-${d.toFixed(2)}s" fill="${c}" points="${starPts(x, y, r, r * .45)}"/>`;
@@ -29,7 +32,7 @@
   const moon = (x, y, r) => `<g class="glow"><circle cx="${x}" cy="${y}" r="${r * 1.7}" fill="#fff3c4" opacity=".12"/><circle cx="${x}" cy="${y}" r="${r * 1.35}" fill="#fff3c4" opacity=".2"/></g>${paper(`<circle cx="${x}" cy="${y}" r="${r}" fill="#fbf0c9"/><circle cx="${x - r * .25}" cy="${y - r * .2}" r="${r * .16}" fill="#efe0a8"/><circle cx="${x + r * .28}" cy="${y + r * .25}" r="${r * .11}" fill="#efe0a8"/>`, true)}`;
   const sun = (x, y, r, c = '#ffe08a') => `<g class="glow"><circle cx="${x}" cy="${y}" r="${r * 1.8}" fill="${c}" opacity=".25"/></g>${paper(`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`, true)}`;
   const heart = (x, y, s, fill) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0,10 C-16,-4 -26,-18 -13,-27 C-6,-31 0,-25 0,-20 C0,-25 6,-31 13,-27 C26,-18 16,-4 0,10 Z" fill="${fill}"/></g>`;
-  const snowflakes = (n, rmin, rmax, t0, t1) => Array.from({ length: n }, () => `<circle class="snow" style="animation-duration:${(t0 + R() * (t1 - t0)).toFixed(1)}s;animation-delay:-${(R() * 10).toFixed(1)}s" cx="${(R() * 800).toFixed(0)}" cy="0" r="${(rmin + R() * (rmax - rmin)).toFixed(1)}" fill="#fff" opacity=".9"/>`).join('');
+  const snowflakes = (n, rmin, rmax, t0, t1) => Array.from({ length: Q === 'baja' ? Math.ceil(n / 2) : n }, () => `<circle class="snow" style="animation-duration:${(t0 + R() * (t1 - t0)).toFixed(1)}s;animation-delay:-${(R() * 10).toFixed(1)}s" cx="${(R() * 800).toFixed(0)}" cy="0" r="${(rmin + R() * (rmax - rmin)).toFixed(1)}" fill="#fff" opacity=".9"/>`).join('');
 
   /* ── edificios y decorado ── */
   const house = (x, y, w, h, wall, roof, lit = true) => `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="${wall}"/><polygon points="${x - 6},${y - h} ${x + w / 2},${y - h - w * .5} ${x + w + 6},${y - h}" fill="${roof}"/><rect x="${x + w * .16}" y="${y - h * .72}" width="${w * .24}" height="${h * .3}" fill="${lit ? '#ffd36b' : '#59607e'}"/><rect x="${x + w * .6}" y="${y - h * .72}" width="${w * .24}" height="${h * .3}" fill="${lit ? '#ffd36b' : '#59607e'}"/>`;
@@ -66,7 +69,7 @@
     <path d="M60,-44 L64,-38 L68,-44 L72,-38 L76,-44" fill="#fff" stroke="#fff"/>
   </g>`;
   const bird = (x, y, s = 1, col = '#4d78d0') => `<g transform="translate(${x},${y}) scale(${s})"><ellipse cx="0" cy="0" rx="12" ry="8" fill="${col}"/><circle cx="10" cy="-5" r="6" fill="${col}"/><polygon points="15,-5 22,-3 15,-1" fill="#f0a23a"/><polygon points="-10,0 -24,-6 -20,4" fill="${col}"/><circle cx="12" cy="-6" r="1.4" fill="#fff"/><g class="wing"><path d="M-2,-4 Q-6,-18 -16,-16 Q-8,-8 -2,-2Z" fill="#2a4388"/></g></g>`;
-  const swallow = (x, y, s = 1, flip = 1, cls = '', rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s * flip},${s})"><g class="${cls}" filter="url(#paperFar)">
+  const swallow = (x, y, s = 1, flip = 1, cls = '', rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s * flip},${s})"><g class="${cls}${Q === 'baja' ? ' pcut' : ''}"${Q === 'baja' ? '' : ' filter="url(#paperFar)"'}>
  <path d="M-30,-3 L-56,-12 L-44,0 L-58,10 L-28,6 Z" fill="#1f2f66"/>
  <ellipse cx="0" cy="0" rx="28" ry="12" fill="#2a4388"/>
  <ellipse cx="7" cy="5" rx="17" ry="6.5" fill="#f6e7c8"/>
@@ -79,9 +82,9 @@
 
 
   /* ── ambiente: motas, niebla, haces de luz, velas ── */
-  const motes = (n, col = '#ffe9a8', y0 = 40, y1 = 460, x0 = 0, x1 = 800) => Array.from({ length: n }, () => { const x = x0 + R() * (x1 - x0), y = y0 + R() * (y1 - y0); return `<circle class="mote" style="--t:${(7 + R() * 8).toFixed(1)}s;--dx:${((R() - .5) * 80).toFixed(0)}px;--dy:${(-20 - R() * 60).toFixed(0)}px;animation-delay:-${(R() * 12).toFixed(1)}s" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(1.4 + R() * 2.4).toFixed(1)}" fill="${col}"/>`; }).join('');
-  const fog = (y, op = .25, h = 70) => `<g class="fog" style="opacity:${op}"><ellipse cx="160" cy="${y}" rx="260" ry="${h / 2}" fill="url(#fogg)"/><ellipse cx="560" cy="${y + 8}" rx="300" ry="${h / 2}" fill="url(#fogg)"/><ellipse cx="820" cy="${y - 6}" rx="240" ry="${h / 2}" fill="url(#fogg)"/></g>`;
-  const beams = (x, y, n = 3, w = 90, len = 420) => Array.from({ length: n }, (_, i) => `<polygon class="beam" style="animation-delay:-${(i * 1.7).toFixed(1)}s" points="${x + i * 40},${y} ${x + i * 40 + w},${y} ${x + i * 40 + w * 2.2},${y + len} ${x + i * 40 - w * .6},${y + len}" fill="url(#beamg)"/>`).join('');
+  const motes = (n, col = '#ffe9a8', y0 = 40, y1 = 460, x0 = 0, x1 = 800) => Array.from({ length: Q === 'baja' ? 0 : Q === 'media' ? Math.ceil(n / 2) : n }, () => { const x = x0 + R() * (x1 - x0), y = y0 + R() * (y1 - y0); return `<circle class="mote" style="--t:${(7 + R() * 8).toFixed(1)}s;--dx:${((R() - .5) * 80).toFixed(0)}px;--dy:${(-20 - R() * 60).toFixed(0)}px;animation-delay:-${(R() * 12).toFixed(1)}s" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(1.4 + R() * 2.4).toFixed(1)}" fill="${col}"/>`; }).join('');
+  const fog = (y, op = .25, h = 70) => Q === 'baja' ? '' : `<g class="fog" style="opacity:${op}"><ellipse cx="160" cy="${y}" rx="260" ry="${h / 2}" fill="url(#fogg)"/><ellipse cx="560" cy="${y + 8}" rx="300" ry="${h / 2}" fill="url(#fogg)"/><ellipse cx="820" cy="${y - 6}" rx="240" ry="${h / 2}" fill="url(#fogg)"/></g>`;
+  const beams = (x, y, n = 3, w = 90, len = 420) => Array.from({ length: Q === 'baja' ? 0 : n }, (_, i) => `<polygon class="beam" style="animation-delay:-${(i * 1.7).toFixed(1)}s" points="${x + i * 40},${y} ${x + i * 40 + w},${y} ${x + i * 40 + w * 2.2},${y + len} ${x + i * 40 - w * .6},${y + len}" fill="url(#beamg)"/>`).join('');
   const candle = (x, y, s = 1, lit = true) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-7" y="-46" width="14" height="46" rx="3" fill="#f4eee0"/><rect x="-7" y="-46" width="5" height="46" rx="2" fill="#fff"/><path d="M-7,-46 q3,10 7,2 q4,8 7,-2" fill="#f4eee0"/><rect x="-1" y="-54" width="2" height="9" fill="#3a2a1a"/>${lit ? `<g class="flick"><circle cx="0" cy="-66" r="30" fill="url(#fireglow)"/><path d="M0,-52 Q-8,-62 0,-80 Q8,-62 0,-52Z" fill="#ffb347"/><path d="M0,-54 Q-4,-62 0,-72 Q4,-62 0,-54Z" fill="#fff0a8"/></g>` : ''}</g>`;
   const lantern = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-14" y="-36" width="28" height="36" rx="4" fill="#4a4a58"/><rect x="-9" y="-30" width="18" height="24" fill="#ffd36b"/><path d="M-10,-36 q10,-14 20,0" fill="none" stroke="#4a4a58" stroke-width="4"/><circle class="flick" cx="0" cy="-18" r="34" fill="url(#fireglow)"/></g>`;
 
@@ -140,5 +143,5 @@
   /* OH.lang(id, code, data): registra el texto de un cuento en otro idioma (zh | en). */
   global.OH.langs = global.OH.langs || {};
   global.OH.lang = (id, code, data) => { (global.OH.langs[id] = global.OH.langs[id] || {})[code] = data; };
-  global.OH.kit = { R, reseed, hash, paper, ly, star, stars, wave, cloud, moon, sun, heart, snowflakes, house, cottage, fence, tree, pine, bush, flower, flowers, win, person, hood, rabbit, wolf, bird, swallow, svg, sky, lightFx, defs, motes, fog, beams, candle, lantern, pumpkin, bat, crow, tomb, web, ghost, vultureEye, clock };
+  global.OH.kit = { R, reseed, hash, paper, ly, star, stars, wave, cloud, moon, sun, heart, snowflakes, house, cottage, fence, tree, pine, bush, flower, flowers, win, person, hood, rabbit, wolf, bird, swallow, svg, sky, lightFx, defs, setQuality, quality: () => Q, motes, fog, beams, candle, lantern, pumpkin, bat, crow, tomb, web, ghost, vultureEye, clock };
 })(window);

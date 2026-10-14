@@ -122,11 +122,33 @@
     const SFX = { turn: 'audio/page-turn.mp3', slide: 'audio/slide.mp3', move: 'audio/move.mp3' };
     const play = (k, v = .35, delay = 0) => { if (!S.get().sound) return; try { const a = new Audio(SFX[k]); a.volume = v; setTimeout(() => a.play().catch(() => {}), delay); } catch (_) {} };
 
-    /* ── construcción de secciones (el arte se dibuja una sola vez) ── */
+    /* ── render perezoso: solo se dibuja la página actual y sus vecinas ── */
+    const mounted = new Set();
+    function mountArt(i, force) {
+      const art = stage.children[i] && stage.children[i].querySelector('.art'); if (!art) return;
+      if (mounted.has(i) && !force) return;
+      art.innerHTML = draw(art.dataset.scene); mounted.add(i);
+    }
+    function ensureArts(n) {
+      for (let i = 0; i < pages.length; i++) {
+        if (Math.abs(i - n) <= 1) mountArt(i);
+        else if (mounted.has(i)) { stage.children[i].querySelector('.art').innerHTML = ''; mounted.delete(i); }
+      }
+    }
+    function applyQuality() {
+      const tier = OH.perf.current();
+      if (K.quality() === tier && document.documentElement.dataset.q === tier) return;
+      OH.perf.apply(tier);
+      [...mounted].forEach(i => mountArt(i, true));
+    }
+    OH.perf.onTier(() => applyQuality());
+    OH.perf.apply(OH.perf.current());
+
+    /* ── construcción de secciones ── */
     pages.forEach((p, i) => {
       const sec = document.createElement('section');
       sec.className = 'page' + (p.kind === 'cover' ? ' cover' : '');
-      sec.innerHTML = `<div class="art">${draw(p.kind === 'cover' ? 'cover' : p.kind === 'quiz' ? 'fin' : p.scene)}</div><div class="copy"></div>${p.kind === 'quiz' ? '<div class="quiz"></div>' : ''}`;
+      sec.innerHTML = `<div class="art" data-scene="${p.kind === 'cover' ? 'cover' : p.kind === 'quiz' ? 'fin' : p.scene}"></div><div class="copy"></div>${p.kind === 'quiz' ? '<div class="quiz"></div>' : ''}`;
       stage.appendChild(sec);
       const d = document.createElement('button'); d.onclick = () => go(i); dots.appendChild(d);
     });
@@ -154,6 +176,7 @@
     async function refresh() {
       await ensureLangs();
       applySettings();
+      applyQuality();
       for (let i = 0; i < pages.length; i++) renderCopy(i);
       if (cur >= 0) updateNum();
       if (cur >= 0) stage.children[cur].classList.add('on');
@@ -205,6 +228,8 @@
       const sc = secs[n]; sc.classList.remove('leave', 'prev', 'on', 'enter'); void sc.offsetWidth; sc.classList.add('on', 'enter');
       if (!first && n !== cur) { play('turn', .4); play('slide', .22, 550); }
       cur = n;
+      ensureArts(n);
+      OH.perf.sample(); OH.perf.hud();
       [...dots.children].forEach((d, i) => d.classList.toggle('on', i === n));
       bar.style.width = ((n + 1) / pages.length * 100) + '%';
       updateNum();
@@ -223,7 +248,7 @@
     /* el cartón "hierve": los bordes se re-trazan ~7 veces por segundo (stop-motion) */
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const ts = [...document.querySelectorAll('feTurbulence.boil')]; let k = 0;
-      setInterval(() => { if (document.hidden) return; k = (k + 1) % 6; ts.forEach((tt, i) => tt.setAttribute('seed', 3 + k * 7 + i * 5)); }, 140);
+      setInterval(() => { if (document.hidden || OH.perf.current() !== 'alta') return; k = (k + 1) % 6; ts.forEach((tt, i) => tt.setAttribute('seed', 3 + k * 7 + i * 5)); }, 140);
     }
     /* parallax suave con el cursor */
     (() => {
