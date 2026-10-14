@@ -60,3 +60,11 @@ body.has-terror{--wall:#f3e6c8}
 @keyframes dangle{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
 .flick{transform-box:fill-box;transform-origin:50% 100%;animation:flick .8s steps(1,end) infinite}
 @keyframes flick{0%{opacity:.85;transform:scale(1,1)}20%{opacity:1;transform:scale(.94,1.08)}45%{opacity:.7;transform:scale(1.04,.94)}70%{opacity:.95;transform:scale(.97,1.05)}}
+
+/* ── tema oscuro de la repisa ── */
+body.dark{background:radial-gradient(circle at 50% 0,#3a1f4a,transparent 60%),#150b22;color:#efe6ff}
+body.dark h1{color:#f6ecff;text-shadow:2px 3px 0 #5a1226}
+body.dark .sec{color:#ffe9c8}
+body.dark .case{background:#2b1d3a;box-shadow:0 0 0 4px #1f1230,0 24px 40px rgba(0,0,0,.5)}
+body.dark .shelf{background:linear-gradient(#2a1c3d,#1c112c);box-shadow:inset 0 10px 22px rgba(0,0,0,.55)}
+body.dark .foot,body.dark .foot a{color:#b79ad6}

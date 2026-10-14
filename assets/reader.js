@@ -155,8 +155,7 @@
 
     function applySettings() {
       const s = S.get();
-      document.documentElement.dataset.size = s.size;
-      document.documentElement.dataset.theme = s.theme;
+      if (OH.panel) OH.panel.applyGlobal();
       stage.dataset.submode = lang.sub ? s.subMode : 'hidden';
       stage.dataset.pinyin = lang.main === 'zh' ? s.pinyin : 'off';
       document.documentElement.lang = lang.main;

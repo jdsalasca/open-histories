@@ -7,21 +7,22 @@
 <meta name="description" content="Cuentos clásicos de dominio público, completos y animados en papercraft. Con rincón de terror para Halloween.">
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/shelf.css">
+<link rel="stylesheet" href="assets/panel.css">
 </head>
 <body>
 <header>
   <h1>open<i>-</i>histories</h1>
-  <p>Una repisa de cuentos clásicos de <b>dominio público</b>, completos, en español y animados en papel recortado. Toca un libro para abrirlo.</p>
+  <p data-i18n="shelf_intro"></p>
 </header>
 
-<h2 class="sec">Para leer de día <small>cuentos y fábulas</small></h2>
+<h2 class="sec"><span data-i18n="section_day"></span> <small data-i18n="day_sub"></small></h2>
 <main class="room"><div class="case" id="day"></div></main>
 
-<section class="terror-wrap" aria-label="Rincón del terror">
+<section class="terror-wrap" id="terrorSec">
   <svg class="fly" width="70" height="40" viewBox="-40 -20 80 40" aria-hidden="true"><g fill="#0b0716"><ellipse rx="6" ry="8"/><g class="w"><path d="M-5,-2 Q-22,-20 -38,-4 Q-30,-6 -26,2 Q-20,-4 -16,6 Q-10,0 -5,6Z"/><path d="M5,-2 Q22,-20 38,-4 Q30,-6 26,2 Q20,-4 16,6 Q10,0 5,6Z"/></g></g><circle cx="-2" cy="-2" r="1.1" fill="#ffd36b"/><circle cx="2" cy="-2" r="1.1" fill="#ffd36b"/></svg>
-  <h2 class="sec">🎃 Rincón del terror <small>solo para lectores valientes</small></h2>
+  <h2 class="sec"><span data-i18n="section_night"></span> <small data-i18n="night_sub"></small></h2>
   <main class="room"><div class="case terror" id="night"></div></main>
-  <p class="foot-note">Clásicos del miedo, completos y sin recortes. Recomendados desde los 12 años.</p>
+  <p class="foot-note" data-i18n="terror_note"></p>
 </section>
 
 <p class="foot">
@@ -30,11 +31,14 @@
 </p>
 
 <script src="stories/catalog.js"></script>
+<script src="assets/settings.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/words.js"></script>
+<script src="assets/panel.js"></script>
 <script>
 /* catálogo de la repisa. soon:true = todavía no está en la repisa */
-const toBook = b => ({ id: b.id, t: b.title.es, a: b.author, y: b.year, c: b.cover.color, tip: b.tip, e: b.cover.emblem, soon: b.soon, dark: b.shelf === 'terror', age: b.age >= 12 });
-const DAY = OH.catalog.filter(b => b.shelf === 'dia').map(toBook);
-const NIGHT = OH.catalog.filter(b => b.shelf === 'terror').map(toBook);
+const lang = () => OH.settings.get().lang;
+const toBook = b => ({ id: b.id, t: b.title[lang()] || b.title.es, a: b.author, y: b.year, c: b.cover.color, tip: b.tip, e: b.cover.emblem, soon: b.soon, dark: b.shelf === 'terror', age: b.age >= 12 });
 const E = {
   rabbit:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#bfe3ff"/><path d="M0,86 Q60,66 120,86 V112 H0Z" fill="#7fbf6e"/><polygon points="20,86 36,40 52,86" fill="#3d7d5a"/><ellipse cx="78" cy="84" rx="20" ry="15" fill="#b9926a"/><circle cx="92" cy="68" r="11" fill="#b9926a"/><ellipse cx="88" cy="46" rx="4" ry="15" fill="#b9926a"/><ellipse cx="97" cy="47" rx="4" ry="15" fill="#b9926a" transform="rotate(10 97 47)"/><path d="M62,82 Q66,66 80,70 L82,92 Q64,94 62,82Z" fill="#2e5fbf"/><circle cx="96" cy="66" r="2" fill="#3a2a1a"/></svg>`,
   giant:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#d8f0ff"/><path d="M0,88 Q60,70 120,88 V112 H0Z" fill="#8fcf7a"/><g fill="#e8a9b8"><circle cx="24" cy="62" r="18"/><circle cx="104" cy="66" r="16"/></g><rect x="21" y="70" width="6" height="26" fill="#7a5230"/><rect x="101" y="74" width="6" height="24" fill="#7a5230"/><path d="M46,100 L52,52 H78 L84,100Z" fill="#7a4fa0"/><circle cx="65" cy="42" r="13" fill="#f0c8a0"/><path d="M52,44 Q52,66 65,68 Q78,66 78,44 Q72,56 65,56 Q58,56 52,44Z" fill="#8b6a43"/></svg>`,
@@ -58,10 +62,23 @@ const lamp = `<svg class="deco" width="60" height="90" viewBox="0 0 60 90"><rect
 const pumpkin = `<svg class="deco" width="86" height="80" viewBox="-50 -70 100 80"><ellipse cx="0" cy="-30" rx="46" ry="34" fill="#e8742a"/><ellipse cx="-26" cy="-30" rx="22" ry="32" fill="#f08a3c"/><ellipse cx="26" cy="-30" rx="22" ry="32" fill="#f08a3c"/><ellipse cx="0" cy="-30" rx="16" ry="34" fill="#d9621f"/><path d="M-4,-62 q-2,-14 8,-18 l4,4 q-6,4 -4,14Z" fill="#4f6b2a"/><g class="flick"><polygon points="-26,-40 -12,-40 -19,-24" fill="#ffd36b"/><polygon points="12,-40 26,-40 19,-24" fill="#ffd36b"/><path d="M-28,-14 L-18,-22 L-10,-12 L0,-22 L10,-12 L18,-22 L28,-14 L22,-2 L10,-8 L0,-2 L-10,-8 L-22,-2Z" fill="#ffd36b"/></g></svg>`;
 const candle = `<svg class="deco" width="44" height="100" viewBox="-22 -90 44 100"><rect x="-7" y="-46" width="14" height="46" rx="3" fill="#f4eee0"/><path d="M-7,-46 q3,10 7,2 q4,8 7,-2" fill="#f4eee0"/><rect x="-1" y="-54" width="2" height="9" fill="#3a2a1a"/><g class="flick"><circle cx="0" cy="-66" r="20" fill="#ffb347" opacity=".35"/><path d="M0,-52 Q-8,-62 0,-80 Q8,-62 0,-52Z" fill="#ffb347"/><path d="M0,-54 Q-4,-62 0,-72 Q4,-62 0,-54Z" fill="#fff0a8"/></g></svg>`;
 const row = (arr, a, b) => `${a}${arr.map(book).join('')}${b}`;
-document.getElementById('day').innerHTML =
-  `<div class="shelf">${row(DAY.slice(0, 3), plant, lamp)}</div><div class="shelf">${row(DAY.slice(3), lamp, plant)}</div>`;
-document.getElementById('night').innerHTML =
-  `<div class="shelf">${row(NIGHT.slice(0, 2), candle, pumpkin)}</div><div class="shelf">${row(NIGHT.slice(2), pumpkin, candle)}</div>`;
+function render() {
+  const day = OH.catalog.filter(b => b.shelf === 'dia').map(toBook);
+  const night = OH.catalog.filter(b => b.shelf === 'terror').map(toBook);
+  document.getElementById('day').innerHTML =
+    `<div class="shelf">${row(day.slice(0, 3), plant, lamp)}</div><div class="shelf">${row(day.slice(3), lamp, plant)}</div>`;
+  document.getElementById('night').innerHTML =
+    `<div class="shelf">${row(night.slice(0, 2), candle, pumpkin)}</div><div class="shelf">${row(night.slice(2), pumpkin, candle)}</div>`;
+  document.getElementById('terrorSec').hidden = !OH.settings.get().terror;
+  document.documentElement.lang = lang();
+  OH.i18n.apply(document, lang());
+}
+const host = document.createElement('div');
+host.className = 'gear-fixed';
+document.body.appendChild(host);
+OH.panel.mount(host);
+OH.settings.onChange(render);
+render();
 </script>
 </body>
 </html>

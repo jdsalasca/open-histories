@@ -22,7 +22,9 @@
       close: 'Cerrar', none: 'Ninguno', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
       shelf_title: 'La repisa', section_day: 'Para leer de día', section_night: '🎃 Rincón del terror',
       soon: 'Pronto', install: 'Instalar', update_available: 'Hay una versión nueva. Toca para actualizar.',
-      lang_missing: 'Ese cuento todavía no está en {lang}; se muestra en español.', no_voice: 'Tu navegador no tiene voz para este idioma.'
+      lang_missing: 'Ese cuento todavía no está en {lang}; se muestra en español.', no_voice: 'Tu navegador no tiene voz para este idioma.',
+      shelf_intro: 'Una repisa de cuentos clásicos de dominio público, completos y animados en papel recortado. Toca un libro para abrirlo.',
+      day_sub: 'cuentos y fábulas', night_sub: 'solo para lectores valientes', terror_note: 'Clásicos del miedo, completos y sin recortes. Recomendados desde los 12 años.'
     },
     zh: {
       back_shelf: '← 书架', prev: '← 上一页', next: '下一页 →', start: '开始阅读 ✨',
@@ -42,7 +44,9 @@
       close: '关闭', none: '无', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
       shelf_title: '书架', section_day: '白天读的故事', section_night: '🎃 恐怖角',
       soon: '即将上架', install: '安装', update_available: '有新版本，点击更新。',
-      lang_missing: '这个故事还没有{lang}版本，现在显示西班牙语。', no_voice: '你的浏览器没有这种语言的语音。'
+      lang_missing: '这个故事还没有{lang}版本，现在显示西班牙语。', no_voice: '你的浏览器没有这种语言的语音。',
+      shelf_intro: '一个收藏公版经典故事的书架：完整、可朗读，配有剪纸动画。点一本书就能打开。',
+      day_sub: '故事与寓言', night_sub: '只给勇敢的读者', terror_note: '恐怖经典，完整不删节，建议 12 岁以上阅读。'
     },
     en: {
       back_shelf: '← The shelf', prev: '← Back', next: 'Next →', start: 'Start reading ✨',
@@ -62,7 +66,9 @@
       close: 'Close', none: 'None', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
       shelf_title: 'The shelf', section_day: 'Daytime reads', section_night: '🎃 Horror corner',
       soon: 'Soon', install: 'Install', update_available: 'A new version is available. Tap to update.',
-      lang_missing: 'This story is not in {lang} yet; showing Spanish.', no_voice: 'Your browser has no voice for this language.'
+      lang_missing: 'This story is not in {lang} yet; showing Spanish.', no_voice: 'Your browser has no voice for this language.',
+      shelf_intro: 'A shelf of classic public-domain stories, complete and animated in paper craft. Tap a book to open it.',
+      day_sub: 'tales and fables', night_sub: 'for brave readers only', terror_note: 'Classics of fear, complete and uncut. Recommended for ages 12 and up.'
     }
   };
 
