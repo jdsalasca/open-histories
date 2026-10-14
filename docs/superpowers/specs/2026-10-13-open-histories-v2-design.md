@@ -1,6 +1,6 @@
 # open-histories v2 — diseño
 
-> Estado: **borrador para revisión** · 2026-10-13
+> Estado: **implementado** (v2.0.0) · 2026-10-13
 > Alcance: motor v2 (ajustes, rendimiento, idiomas, modo sin conexión), contenido en chino/inglés de los 4 cuentos actuales y 2 cuentos nuevos.
 
 ## 1. Objetivo
