@@ -37,7 +37,7 @@ DE_COMPLEMENT = set('很太多更大紧稳无不好快慢特非那这可真又�
 DE_NOT_AFTER = set('获取值舍懂显记觉认晓免省巴恨怪难心博')
 DEI_PRONOUNS = set('我你他她它咱')
 DEI_VERBS = set('去走回做先赶买找是')
-ZHI_PREV = set('一那这每两三四五六七八九十几另')
+ZHI_PREV = set('一那这每两三四五六七八九十几另万百千')
 GENG_NOT_BEFORE = set('新换衣夫夜')
 
 

@@ -1,0 +1,93 @@
+{
+  "title": "The Cowherd and the *Weaver* Girl",
+  "tagline": "Two stars, a river of silver and a bridge of magpies.",
+  "intro": "A poor cowherd, a fairy who weaves and one night a year. The Chinese legend that explains why, on summer nights, there is a bright star on each side of the Milky Way.",
+  "moral": "Faithful love and honest work can stand distance. The legend reminds us that even what seems impossible, crossing a river of stars, can be done when many help: the magpies, with their wings.",
+  "pages": [
+    {
+      "title": "The orphan *cowherd*",
+      "text": [
+        "Long ago, in a village by a river, there lived an orphan boy whom everyone called Niulang, “the cowherd”.",
+        "He lived with his elder brother and his brother’s wife, who treated him badly. He worked from morning to night and was hardly given anything to eat.",
+        "When the brother divided the inheritance, he left Niulang only a tumbledown cottage and an old ox. Niulang did not complain: he looked after the ox like a good friend."
+      ],
+      "word": ["Orphan", "A child whose father and mother are both gone."]
+    },
+    {
+      "title": "The old *ox*",
+      "text": [
+        "One day the old ox opened its mouth and spoke. “Don’t be afraid, Niulang,” it said. “I am a star from the sky, punished and sent down to earth. You have been kind to me and I want to help you.”",
+        "“Tomorrow at dawn the fairies of heaven will come to bathe in the lake in the forest. One of them is Zhinü, the weaver, who makes the coloured clouds. Take her pink dress, which will be hanging from a tree, and she will be your wife.”",
+        "Niulang could hardly believe it, but the next day he went to the lake."
+      ],
+      "word": ["Weaver", "A person who makes cloth by crossing threads on a loom."]
+    },
+    {
+      "title": "The lake and the fairies",
+      "text": [
+        "At dawn, mist covered the lake. Suddenly seven girls in coloured dresses flew down from the sky like birds and slipped into the water, laughing.",
+        "Niulang hid among the reeds. He saw the dresses hanging from the branches and looked for the pink one. He took it carefully and ran home.",
+        "When the sun rose, the fairies came out of the water and dressed to go back. Six flew up to the sky; the seventh looked for her dress, frightened."
+      ]
+    },
+    {
+      "title": "The *pink* dress",
+      "text": [
+        "Zhinü, the youngest, could not fly without her dress. That night someone knocked on Niulang’s door. “Have you seen my dress?” she asked.",
+        "He told her everything honestly: the ox, the lake and the dress. She looked at him and saw that he was an honest, hard-working man.",
+        "Zhinü smiled and stayed. Soon afterwards they were married."
+      ]
+    },
+    {
+      "title": "Happy *days*",
+      "text": [
+        "They were happy years. Niulang worked in the fields and Zhinü wove cloth lovelier than any in the village, with threads that looked like clouds.",
+        "They had two children: a boy and a girl. The little house filled with laughter.",
+        "People said they had never seen such a close family.",
+        "But up in heaven, someone noticed that the weaver was missing."
+      ]
+    },
+    {
+      "title": "The ox’s gift",
+      "text": [
+        "One day the old ox fell ill. Before it died it said to Niulang: “Keep my hide. When you are in great trouble, put it on and it will carry you wherever you need to go.”",
+        "Niulang wept for a long time. He buried the ox under a tree and kept its hide with love.",
+        "He did not know that he would need it very soon."
+      ]
+    },
+    {
+      "title": "The Queen *Mother*",
+      "text": [
+        "One afternoon an enormous storm rose. The sky turned black, the wind shook the house and a clap of thunder made the earth tremble.",
+        "When everything grew calm, Zhinü had vanished. The children cried: “Mama, mama!”",
+        "The Queen Mother of the West, Zhinü’s grandmother, was furious that a fairy of heaven had married a mortal. She sent heavenly soldiers and took her granddaughter back.",
+        "Niulang looked at the sky and remembered the ox’s words."
+      ],
+      "think": ["Why do you think the Queen Mother was angry with Zhinü?", "Because she would not accept a fairy marrying a mortal. The legend is about how rules and prejudice can separate people who love each other."]
+    },
+    {
+      "title": "The river of *silver*",
+      "text": [
+        "He put his two children in two baskets, threw the ox’s hide over his shoulders, and suddenly his feet left the ground. He flew after his wife through the clouds.",
+        "He was almost catching her when the Queen Mother pulled a golden hairpin from her hair and drew it across the sky. Where it passed, a wide, rushing river appeared, full of stars.",
+        "It was the Milky Way: the Silver River. Niulang stayed on one bank and Zhinü on the other, and they could not cross.",
+        "They looked at each other from the two shores, weeping, while the children called out to them."
+      ]
+    },
+    {
+      "title": "The bridge of *magpies*",
+      "text": [
+        "The magpies saw everything and were moved. Every year, on the night of the seventh day of the seventh month, thousands of magpies gather in the sky and make a bridge with their wings.",
+        "On that bridge Niulang and Zhinü meet one night a year. The Queen Mother, seeing how faithful they were, allowed it.",
+        "They say the rain that night is their tears of joy, and that the magpies lose the feathers on their heads from holding them up.",
+        "On a summer night you can see them: two bright stars, Zhinü (Vega) and Niulang (Altair), one on each side of the river of stars, waiting for that night."
+      ],
+      "think": ["What does this legend tell you about many people helping together?", "That something impossible for two can be done when many cooperate: every magpie lends its wings."]
+    }
+  ],
+  "quiz": [
+    { "q": "What did the old ox advise Niulang to do?", "o": ["Leave the village", "Take the weaver’s pink dress at the lake", "Sell the house"], "a": 1, "ok": "Yes! That is how he met Zhinü.", "no": "The ox told him to take Zhinü’s pink dress, hanging from a tree by the lake." },
+    { "q": "Who took Zhinü back to heaven?", "o": ["The Queen Mother of the West", "Niulang’s brother", "The old ox"], "a": 0, "ok": "Well done! She was her grandmother.", "no": "It was the Queen Mother of the West, her grandmother." },
+    { "q": "How do Niulang and Zhinü meet every year?", "o": ["By swimming across the river", "On a bridge the magpies make with their wings", "On a golden boat"], "a": 1, "ok": "Exactly! On the seventh night of the seventh month.", "no": "The magpies form a bridge with their wings on the seventh night of the seventh month." }
+  ]
+}
