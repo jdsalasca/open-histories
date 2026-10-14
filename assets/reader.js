@@ -58,11 +58,13 @@
       if (L !== 'zh') return vocab(text);
       const chunks = TX.markGlossary(text, gl);
       const pairs = TX.rubyPairs(text, py);
+      const tags = TX.tagMask(text);
       let k = 0;
       const meaning = lang.sub === 'en' ? 'en' : 'es';
       return chunks.map(ch => {
         const n = [...ch.t].length;
-        const inner = pairs.slice(k, k + n).map(x => (x.p ? `<ruby>${esc(x.c)}<rt>${esc(x.p)}</rt></ruby>` : esc(x.c))).join('');
+        const base = k;
+        const inner = pairs.slice(k, k + n).map((x, i) => (tags[base + i] ? x.c : x.p ? `<ruby>${esc(x.c)}<rt>${esc(x.p)}</rt></ruby>` : esc(x.c))).join('');
         k += n;
         if (ch.g == null) return inner;
         const g = gl[ch.g];

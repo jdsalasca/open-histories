@@ -76,7 +76,22 @@
     return { main, sub, notes };
   }
 
-  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs };
+  /** Máscara por carácter (código de punto): true si el carácter forma parte de una etiqueta <b>, </b>, <i> o </i>. */
+  function tagMask(text) {
+    const s = [...String(text == null ? '' : text)];
+    const mask = s.map(() => false);
+    const re = /<\/?(?:b|i)>/g;
+    const str = s.join('');
+    let m;
+    while ((m = re.exec(str))) {
+      const start = [...str.slice(0, m.index)].length;
+      const len = [...m[0]].length;
+      for (let k = 0; k < len; k++) mask[start + k] = true;
+    }
+    return mask;
+  }
+
+  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs, tagMask };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') { window.OH = window.OH || {}; window.OH.text = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

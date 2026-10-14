@@ -63,3 +63,12 @@ test('rubyCheck_reports_missing_and_leftover_syllables', () => {
   assert.equal(rubyCheck('小兔', 'xiǎo tù zi').leftover, 'zi');
   assert.deepEqual(rubyCheck('HSK1 很好。', 'HSK1 hěn hǎo。'), { missing: 0, leftover: '' });
 });
+
+const { tagMask } = require('../assets/text.js');
+test('tagMask_marks_only_b_and_i_tags', () => {
+  const m = tagMask('<b>禁止</b>入内<i>完</i>');
+  const s = [...'<b>禁止</b>入内<i>完</i>'];
+  const raw = s.filter((_, i) => m[i]).join('');
+  assert.equal(raw, '<b></b><i></i>');
+  assert.equal(tagMask('a < b').some(Boolean), false);
+});
