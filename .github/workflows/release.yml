@@ -1,0 +1,23 @@
+name: release
+on:
+  release:
+    types: [published]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pypinyin
+      - run: node --test tests/*.test.js
+      - run: python -m unittest tests.test_pinyin
+      - run: node tools/validate.js
+      - run: bash tools/pack.sh
+      - run: gh release upload "${{ github.event.release.tag_name }}" dist/open-histories-offline.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
