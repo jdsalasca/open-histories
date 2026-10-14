@@ -137,5 +137,8 @@
   global.OH = global.OH || {};
   global.OH.registry = global.OH.registry || {};
   global.OH.story = def => { global.OH.registry[def.id] = def; if (global.OH.onStory) global.OH.onStory(def); };
+  /* OH.lang(id, code, data): registra el texto de un cuento en otro idioma (zh | en). */
+  global.OH.langs = global.OH.langs || {};
+  global.OH.lang = (id, code, data) => { (global.OH.langs[id] = global.OH.langs[id] || {})[code] = data; };
   global.OH.kit = { R, reseed, hash, paper, ly, star, stars, wave, cloud, moon, sun, heart, snowflakes, house, cottage, fence, tree, pine, bush, flower, flowers, win, person, hood, rabbit, wolf, bird, swallow, svg, sky, lightFx, defs, motes, fog, beams, candle, lantern, pumpkin, bat, crow, tomb, web, ghost, vultureEye, clock };
 })(window);

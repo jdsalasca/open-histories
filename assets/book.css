@@ -247,3 +247,22 @@ body.terror{background:radial-gradient(circle at 50% -10%,#3a1f4a,transparent 60
 .warn{display:inline-block;align-self:flex-start;font-size:.78rem;font-weight:800;letter-spacing:.06em;padding:5px 11px;border-radius:999px;background:#5a1226;color:#ffd0d8;box-shadow:0 2px 0 #2b0a14}
 .ripple2{transform-box:fill-box;transform-origin:center;animation:ripple2 2.4s ease-out infinite;opacity:0}
 @keyframes ripple2{0%{transform:scale(.3);opacity:.85}100%{transform:scale(6);opacity:0}}
+
+/* ── idiomas: párrafos, subtítulos y pinyin ── */
+:root{--zh:"Noto Sans SC","PingFang SC","Microsoft YaHei","Source Han Sans SC","WenQuanYi Micro Hei",sans-serif}
+html[data-size="S"]{font-size:14.5px}html[data-size="L"]{font-size:18px}html[data-size="XL"]{font-size:20px}
+.note-bar{margin:8px 28px 0;padding:6px 12px;border-radius:10px;background:#fff1c9;color:#5a3d12;font-size:.85rem;font-weight:700}
+.para{margin:0 0 .85em;padding:2px 6px;border-radius:10px;cursor:pointer;transition:background .15s}
+.para:hover{background:rgba(233,185,66,.13)}
+.para .main{margin:0;font-size:1.06rem;line-height:1.62}
+.para .main.lang-zh{font-family:var(--zh);font-size:1.28rem;line-height:2.15}
+.para .subt{display:none;margin:.3em 0 0;padding-left:9px;border-left:3px solid var(--gold);font-size:.92rem;line-height:1.5;opacity:.82;font-style:italic}
+.stage[data-submode="always"] .para .subt,.para.open .subt{display:block}
+.stage[data-submode="hidden"] .para .subt{display:none}
+ruby{ruby-position:over}
+rt{display:none;font-family:var(--sans);font-size:.5em;letter-spacing:.02em;color:#8a6a40;font-style:normal}
+.stage[data-pinyin="always"] rt,.para.open rt{display:ruby-text}
+.stage[data-pinyin="off"] rt{display:none!important}
+.v.zhw{border-bottom-style:solid}
+.v.saved::before{content:"⭐";position:absolute;top:-1.3em;left:50%;transform:translateX(-50%);font-size:.6em}
+.terror rt{color:#c9a8ff}.terror .para:hover{background:rgba(190,120,255,.12)}.terror .note-bar{background:#33224a;color:#ecdcff}

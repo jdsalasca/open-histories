@@ -11,9 +11,10 @@
 <body>
 <main class="book" id="book">
   <div class="topbar">
-    <span><a class="back" href="index.html">← La repisa</a> &nbsp;·&nbsp; <span id="bookTitle"></span></span>
+    <span><a class="back" id="backLink" href="index.html">← La repisa</a> &nbsp;·&nbsp; <span id="bookTitle"></span></span>
     <span class="r"><button class="snd" id="snd" aria-pressed="true">🔊 Sonido</button><span id="pageNum">Portada</span></span>
   </div>
+  <div class="note-bar" id="noteBar" hidden></div>
   <div class="progress"><i id="bar"></i></div>
   <div class="stage" id="stage"></div>
   <div class="nav">
@@ -23,6 +24,10 @@
   </div>
 </main>
 <noscript><p style="text-align:center">Este libro necesita JavaScript para animarse.</p></noscript>
+<script src="stories/catalog.js"></script>
+<script src="assets/settings.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/text.js"></script>
 <script src="assets/kit.js"></script>
 <script src="assets/reader.js"></script>
 </body>
