@@ -29,6 +29,31 @@ class AnnotateTests(unittest.TestCase):
         self.assertEqual(P.annotate('Hello 123', {}), 'Hello 123')
 
 
+class ParticleTests(unittest.TestCase):
+    def test_di_particle_is_de_but_nouns_keep_di(self):
+        self.assertEqual(P.annotate('他小心地走进房间。', {}).split()[:4], ['tā', 'xiǎo', 'xīn', 'de'])
+        self.assertIn('cǎo dì shàng', P.annotate('草地上', {}))
+        self.assertIn('dì fāng', P.annotate('这个地方', {}))
+        self.assertIn('dāng dì', P.annotate('当地的人', {}))
+
+    def test_de_particle_after_verb_and_dei_for_must(self):
+        self.assertIn('zuò de hěn kuài', P.annotate('他做得很快', {}))
+        self.assertIn('guān de jǐn jǐn', P.annotate('窗板关得紧紧的', {}))
+        self.assertIn('dé dào', P.annotate('他得到了奖', {}))
+        self.assertIn('wǒ děi qù', P.annotate('我得去找', {}))
+
+
+class MeasureWordTests(unittest.TestCase):
+    def test_zhi_measure_word_vs_zhi_only(self):
+        self.assertIn('nà zhī yǎn jīng', P.annotate('那只眼睛', {}))
+        self.assertIn('zhè zhǐ shì', P.annotate('这只是烟囱', {}))
+        self.assertIn('yì zhī', P.annotate('一只老鼠', {}).replace('yī zhī', 'yì zhī'))
+
+    def test_geng_more_and_dei_must(self):
+        self.assertIn('gèng shēn', P.annotate('恐惧更深', {}))
+        self.assertIn('tā děi shì', P.annotate('他得是一个', {}))
+
+
 class BuildTests(unittest.TestCase):
     def test_build_fills_py_and_glossary_py(self):
         src = {

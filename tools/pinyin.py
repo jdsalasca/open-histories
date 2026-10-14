@@ -28,6 +28,65 @@ def _syllables(run):
     return lazy_pinyin(run, style=Style.TONE, neutral_tone_with_five=False)
 
 
+# Palabras donde 地 se lee dì (sustantivo/lugar). En cualquier otro caso se trata como partícula "de".
+DI_WORDS = ['地方', '地上', '地下', '地面', '地球', '地图', '地区', '地址', '地点', '地位', '地步', '地道', '地板', '地狱',
+            '地理', '地震', '地铁', '地毯', '土地', '大地', '草地', '当地', '天地', '陆地', '高地', '田地', '墓地', '场地',
+            '平地', '目的地', '空地', '工地', '基地', '阵地', '内地', '外地', '本地', '各地', '山地', '海地']
+# Lo que puede seguir a 得 cuando es partícula de complemento ("做得很快").
+DE_COMPLEMENT = set('很太多更大紧稳无不好快慢特非那这可真又最清高远深浅长短累饿冷热怎')
+DE_NOT_AFTER = set('获取值舍懂显记觉认晓免省巴恨怪难心博')
+DEI_PRONOUNS = set('我你他她它咱')
+DEI_VERBS = set('去走回做先赶买找是')
+ZHI_PREV = set('一那这每两三四五六七八九十几另')
+GENG_NOT_BEFORE = set('新换衣夫夜')
+
+
+def _is_di_noun(run, i):
+    for w in DI_WORDS:
+        j = w.index('地')
+        start = run.find(w)
+        while start != -1:
+            if start + j == i:
+                return True
+            start = run.find(w, start + 1)
+    return False
+
+
+def _tokens(run):
+    """Divide una racha de hanzi en trozos ('txt', hanzi) y partículas ('py', sílaba)."""
+    out, buf = [], ''
+    for i, c in enumerate(run):
+        kind = None
+        if c == '地' and not _is_di_noun(run, i) and i > 0:
+            kind = 'de'
+        elif c == '只':
+            nxt = run[i + 1] if i + 1 < len(run) else ''
+            prev = run[i - 1] if i > 0 else ''
+            if prev in ZHI_PREV and nxt != '是':
+                kind = 'zhī'
+        elif c == '更':
+            nxt = run[i + 1] if i + 1 < len(run) else ''
+            if nxt and nxt not in GENG_NOT_BEFORE:
+                kind = 'gèng'
+        elif c == '得':
+            nxt = run[i + 1] if i + 1 < len(run) else ''
+            prev = run[i - 1] if i > 0 else ''
+            if nxt in DE_COMPLEMENT and prev not in DE_NOT_AFTER:
+                kind = 'de'
+            elif nxt in DEI_VERBS and prev in DEI_PRONOUNS:
+                kind = 'děi'
+        if kind:
+            if buf:
+                out.append(('txt', buf))
+                buf = ''
+            out.append(('py', kind))
+        else:
+            buf += c
+    if buf:
+        out.append(('txt', buf))
+    return out
+
+
 def annotate(text, overrides=None):
     """Pinyin alineado con `text`. `overrides` fuerza la lectura de palabras (clave = hanzi, valor = sílabas)."""
     forced = dict(NEUTRAL)
@@ -41,7 +100,8 @@ def annotate(text, overrides=None):
         for m in CJK_RUN.finditer(piece):
             if m.start() > pos:
                 parts.append(('lit', piece[pos:m.start()]))
-            parts.append(('py', ' '.join(_syllables(m.group()))))
+            for kind, val in _tokens(m.group()):
+                parts.append(('py', ' '.join(_syllables(val)) if kind == 'txt' else val))
             pos = m.end()
         if pos < len(piece):
             parts.append(('lit', piece[pos:]))
