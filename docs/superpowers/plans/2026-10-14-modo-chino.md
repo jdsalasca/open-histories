@@ -67,6 +67,8 @@ Variantes: `theme` light/dark · `size` S/M/L/XL · `view` read/study · `lang` 
   --screenshot="C:\Users\jdsal\AppData\Local\Temp\opencode\shots\<nombre>.png" "http://localhost:8124/_shot.html"
 ```
 
+**Antes de cada tanda de capturas**: borrar el perfil de Chrome (`Remove-Item "$env:TEMP\oh-shot" -Recurse -Force -ErrorAction SilentlyContinue`). Sin esto Chrome sirve el CSS cacheado y las capturas salen idénticas a la tanda anterior.
+
 4. Borrar `_shot.html` y frenar el servidor. Las capturas se guardan **fuera del repo** (temp).
 
 ---
