@@ -20,9 +20,10 @@
       show_terror: 'Mostrar el Rincón del terror', offline: 'Sin conexión', download_story: 'Descargar este cuento',
       download_all: 'Descargar toda la biblioteca', downloaded: 'Descargado', downloading: 'Descargando…',
       offline_ready: 'Listo para leer sin conexión', my_words: 'Mis palabras', no_words: 'Aún no guardaste palabras. Toca ⭐ en una palabra subrayada.',
-      close: 'Cerrar', none: 'Ninguno', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
+      close: 'Cerrar', none: 'Ninguno',
       shelf_title: 'La repisa', section_day: 'Para leer de día', section_night: '🎃 Rincón del terror',
       soon: 'Pronto', install: 'Instalar', update_available: 'Hay una versión nueva. Toca para actualizar.',
+      by_author: 'Un cuento de ',
       lang_missing: 'Ese cuento todavía no está en {lang}; se muestra en español.', no_voice: 'Tu navegador no tiene voz para este idioma.',
       shelf_intro: 'Una repisa de cuentos clásicos de dominio público, completos y animados en papel recortado. Toca un libro para abrirlo.',
       day_sub: 'cuentos y fábulas', night_sub: 'solo para lectores valientes', terror_note: 'Clásicos del miedo, completos y sin recortes. Recomendados desde los 12 años.'
@@ -43,9 +44,10 @@
       show_terror: '显示恐怖角', offline: '离线', download_story: '下载这个故事',
       download_all: '下载整个书架', downloaded: '已下载', downloading: '下载中…',
       offline_ready: '可以离线阅读', my_words: '我的生词', no_words: '还没有收藏的词。点击带下划线的词上的 ⭐。',
-      close: '关闭', none: '无', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
+      close: '关闭', none: '无',
       shelf_title: '书架', section_day: '白天读的故事', section_night: '🎃 恐怖角',
       soon: '即将上架', install: '安装', update_available: '有新版本，点击更新。',
+      by_author: '',
       lang_missing: '这个故事还没有{lang}版本，现在显示西班牙语。', no_voice: '你的浏览器没有这种语言的语音。',
       shelf_intro: '一个收藏公版经典故事的书架：完整、可朗读，配有剪纸动画。点一本书就能打开。',
       day_sub: '故事与寓言', night_sub: '只给勇敢的读者', terror_note: '恐怖经典，完整不删节，建议 12 岁以上阅读。'
@@ -66,9 +68,10 @@
       show_terror: 'Show the Horror corner', offline: 'Offline', download_story: 'Download this story',
       download_all: 'Download the whole library', downloaded: 'Downloaded', downloading: 'Downloading…',
       offline_ready: 'Ready to read offline', my_words: 'My words', no_words: 'No saved words yet. Tap ⭐ on an underlined word.',
-      close: 'Close', none: 'None', lang_es: 'Español', lang_zh: '中文', lang_en: 'English',
+      close: 'Close', none: 'None',
       shelf_title: 'The shelf', section_day: 'Daytime reads', section_night: '🎃 Horror corner',
       soon: 'Soon', install: 'Install', update_available: 'A new version is available. Tap to update.',
+      by_author: '',
       lang_missing: 'This story is not in {lang} yet; showing Spanish.', no_voice: 'Your browser has no voice for this language.',
       shelf_intro: 'A shelf of classic public-domain stories, complete and animated in paper craft. Tap a book to open it.',
       day_sub: 'tales and fables', night_sub: 'for brave readers only', terror_note: 'Classics of fear, complete and uncut. Recommended for ages 12 and up.'
@@ -78,9 +81,9 @@
   function makeT(strings) {
     return function t(key, lang) {
       const l = strings[lang] && strings[lang][key];
-      if (l) return l;
+      if (typeof l === 'string') return l;   // admite cadena vacía a propósito
       const es = strings.es && strings.es[key];
-      return es || key;
+      return typeof es === 'string' ? es : key;
     };
   }
   const t = makeT(STRINGS);

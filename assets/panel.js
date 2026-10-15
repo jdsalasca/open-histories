@@ -8,6 +8,9 @@
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   const seg = (k, opts, val) => `<div class="seg" role="group" data-k="${k}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${String(v) === String(val)}">${l}</button>`).join('')}</div>`;
   const row = (label, body) => `<div class="prow"><span class="plabel">${label}</span>${body}</div>`;
+  /* registro de idiomas (langs.js); fallback estático si faltara */
+  const codes = () => (OH.lingo && OH.lingo.codes) ? OH.lingo.codes() : ['es', 'zh', 'en'];
+  const langName = c => (OH.lingo && OH.lingo.get(c).name) || c;
 
   function wordsHTML() {
     const list = OH.words ? OH.words.list() : [];
@@ -23,8 +26,8 @@
   function bodyHTML() {
     const s = S.get();
     return `<div class="phead"><h3>⚙ ${t('settings')}</h3><button type="button" class="pclose" data-close aria-label="${t('close')}">✕</button></div>
-      ${row(t('lang_main'), seg('lang', [['es', t('lang_es')], ['zh', t('lang_zh')], ['en', t('lang_en')]], s.lang))}
-      ${row(t('subtitles'), seg('sub', [['es', t('lang_es')], ['en', t('lang_en')], ['none', t('none')]], s.sub))}
+      ${row(t('lang_main'), seg('lang', codes().map(c => [c, langName(c)]), s.lang))}
+      ${row(t('subtitles'), seg('sub', [...codes().filter(c => c !== s.lang).map(c => [c, langName(c)]), ['none', t('none')]], s.sub))}
       ${row(t('sub_show'), seg('subMode', [['always', t('sub_always')], ['tap', t('sub_tap')], ['hidden', t('sub_hidden')]], s.subMode))}
       ${row(t('pinyin'), seg('pinyin', [['always', t('pinyin_always')], ['tap', t('pinyin_tap')], ['off', t('pinyin_off')]], s.pinyin))}
       ${row(t('view'), seg('view', [['read', t('view_read')], ['study', t('view_study')]], s.view))}
