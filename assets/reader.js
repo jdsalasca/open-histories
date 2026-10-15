@@ -11,9 +11,9 @@
   const stage = $('#stage');
   const TTS = { es: 'es-ES', zh: 'zh-CN', en: 'en-US' };
 
-  /* parámetros de depuración: ?lang=zh&sub=es&pinyin=always (se guardan como ajustes) */
+  /* parámetros de depuración: ?lang=zh&sub=es&pinyin=always&view=study (se guardan como ajustes) */
   const patch = {};
-  ['lang', 'sub', 'subMode', 'pinyin'].forEach(k => { if (qs.get(k)) patch[k] = qs.get(k); });
+  ['lang', 'sub', 'subMode', 'pinyin', 'view'].forEach(k => { if (qs.get(k)) patch[k] = qs.get(k); });
   if (Object.keys(patch).length) S.set(patch);
 
   if (!/^[a-z0-9-]+$/.test(id)) return fail('Falta el cuento. Vuelve a la repisa y elige uno.');
@@ -39,6 +39,7 @@
     const dots = $('#dots'), bar = $('#bar'), numEl = $('#pageNum');
     const prevB = $('#prev'), nextB = $('#next'), sndB = $('#snd');
     let cur = -1, speaking = false, lang = { main: 'es', sub: null, notes: [] };
+    const studyText = new Map();
 
     /* ── datos por idioma ── */
     const dataOf = code => code === 'es'
@@ -77,6 +78,10 @@
     }
     const wordCard = w => `<div class="card word"><h4>${t('word_card')}</h4><b>${w[0]}:</b> ${w[1]}</div>`;
     const thinkCard = th => `<div class="card think"><h4>${t('think_card')}</h4>${th[0]}<div><button class="chip" data-idea style="margin-top:8px">${t('see_idea')}</button></div><div class="idea">${th[1]}</div></div>`;
+    const modeSeg = () => {
+      const v = S.get().view;
+      return `<span class="modes" role="group" aria-label="${t('view')}"><button type="button" class="chip mode${v === 'read' ? ' on' : ''}" data-mode="read" aria-pressed="${v === 'read'}">📖 ${t('view_read')}</button><button type="button" class="chip mode${v === 'study' ? ' on' : ''}" data-mode="study" aria-pressed="${v === 'study'}">🎓 ${t('view_study')}</button></span>`;
+    };
     const draw = name => { K.reseed(K.hash(st.id + ':' + name)); const f = st.scenes[name]; return f ? f() : ''; };
 
     function renderCopy(i) {
@@ -96,12 +101,24 @@
         renderQuiz(sec, D.quiz || ES.quiz);
       } else {
         const idx = i - 1, pg = ES.pages[idx], pgL = (D.pages || [])[idx] || pg, pgS = SUB && (SUB.pages || [])[idx];
-        const paras = (pgL.text || pg.text).map((tx, j) => paraHTML(tx, pgL.py && pgL.py[j], L, gl, pgS && pgS.text && pgS.text[j], i, j)).join('');
+        const study = S.get().view === 'study';
+        const body = study
+          ? (pgL.text || pg.text).map((tx, j) => {
+            const sents = TX.sentencesWithPy(tx, pgL.py && pgL.py[j]);
+            const rows = sents.map((s, k) => {
+              const key = `${i}-${j}-${k}`;
+              studyText.set(key, String(s.t).replace(/\{\{(.+?)\|.+?\}\}/g, '$1').replace(/<[^>]+>/g, ''));
+              return `<div class="sent"><button type="button" class="say" data-say="${key}" aria-label="${t('listen')}">▶</button><div class="sent-main lang-${L}">${mainHTML(s.t, s.py, L, gl)}</div></div>`;
+            }).join('');
+            const sub = (pgS && pgS.text && pgS.text[j]) ? `<div class="sent-sub lang-${lang.sub}"><span class="slang">${esc(lang.sub)}</span>${vocab(pgS.text[j])}</div>` : '';
+            return `<div class="sgroup">${rows}${sub}</div>`;
+          }).join('')
+          : (pgL.text || pg.text).map((tx, j) => paraHTML(tx, pgL.py && pgL.py[j], L, gl, pgS && pgS.text && pgS.text[j], i, j)).join('');
         const word = pgL.word || pg.word, think = pgL.think || pg.think;
         copy.innerHTML = `<div class="chap">${p.h ? esc(p.h) : (L === 'es' ? (st.chapterLabel || 'Capítulo') + ' ' + i : '')}</div>
           <h2>${titleHTML(pgL.title || p.title || st.title)}</h2>
-          <div class="txt" tabindex="0">${paras}</div>
-          <div class="tools"><button class="chip" data-listen>${t('listen')}</button><span class="pgno">${i} / ${pages.length - 2}</span></div>
+          <div class="txt${study ? ' study' : ''}" tabindex="0">${body}</div>
+          <div class="tools">${modeSeg()}<button class="chip" data-listen>${t('listen')}</button><span class="pgno">${i} / ${pages.length - 2}</span></div>
           ${(word || think) ? `<div class="cards">${word ? wordCard(word) : ''}${think ? thinkCard(think) : ''}</div>` : ''}`;
       }
     }
@@ -161,6 +178,7 @@
       if (OH.panel) OH.panel.applyGlobal();
       stage.dataset.submode = lang.sub ? s.subMode : 'hidden';
       stage.dataset.pinyin = lang.main === 'zh' ? s.pinyin : 'off';
+      stage.dataset.view = s.view;
       document.documentElement.lang = lang.main;
       $('#bookTitle').textContent = `${clean((dataOf(lang.main) || dataOf('es')).title || st.title)} · ${st.author}`;
       document.title = `${clean((dataOf(lang.main) || dataOf('es')).title || st.title)} · open-histories`;
@@ -177,6 +195,7 @@
     }
     async function refresh() {
       await ensureLangs();
+      stopVoice(); studyText.clear();
       applySettings();
       applyQuality();
       for (let i = 0; i < pages.length; i++) renderCopy(i);
@@ -189,6 +208,8 @@
       const g = e.target.closest('[data-go]'); if (g) return go(+g.dataset.go);
       const idea = e.target.closest('[data-idea]');
       if (idea) { const el = idea.closest('.card').querySelector('.idea'); el.classList.toggle('show'); idea.textContent = el.classList.contains('show') ? t('hide_idea') : t('see_idea'); return; }
+      const md = e.target.closest('[data-mode]'); if (md) return S.set({ view: md.dataset.mode });
+      const say = e.target.closest('[data-say]'); if (say) return speakSentence(say);
       const l = e.target.closest('[data-listen]'); if (l) return listen(l);
       const w = e.target.closest('.v.zhw');
       if (w) { toggleWord(w); e.stopPropagation(); return; }
@@ -204,8 +225,7 @@
     function listen(btn) {
       try {
         const sy = window.speechSynthesis; if (!sy) return;
-        const all = () => document.querySelectorAll('[data-listen]').forEach(b => { b.textContent = t('listen'); });
-        if (speaking) { sy.cancel(); speaking = false; all(); return; }
+        if (speaking) { stopVoice(); return; }
         const D = dataOf(lang.main) || dataOf('es'), ES = dataOf('es');
         const pg = (D.pages || [])[cur - 1] || ES.pages[cur - 1];
         const u = new SpeechSynthesisUtterance(pg.text.map(x => String(x).replace(/\{\{(.+?)\|.+?\}\}/g, '$1').replace(/<[^>]+>/g, '')).join(' '));
@@ -214,11 +234,28 @@
         speaking = true; btn.textContent = t('stop'); sy.speak(u);
       } catch (_) {}
     }
+    /* voz por frase (modo Estudio): un solo audio a la vez, sin botones colgados */
+    function stopVoice() {
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (_) {}
+      speaking = false;
+      document.querySelectorAll('[data-listen]').forEach(b => { b.textContent = t('listen'); });
+      document.querySelectorAll('[data-say]').forEach(b => { b.textContent = '▶'; b.classList.remove('playing'); });
+    }
+    function speakSentence(btn) {
+      try {
+        const sy = window.speechSynthesis; if (!sy) return;
+        if (btn.classList.contains('playing')) { stopVoice(); return; }
+        stopVoice();
+        const u = new SpeechSynthesisUtterance(studyText.get(btn.dataset.say) || '');
+        u.lang = TTS[lang.main] || 'es-ES'; u.rate = S.get().rate;
+        u.onend = u.onerror = () => { speaking = false; btn.textContent = '▶'; btn.classList.remove('playing'); };
+        speaking = true; btn.textContent = '⏹'; btn.classList.add('playing'); sy.speak(u);
+      } catch (_) {}
+    }
     function go(n, dir) {
       n = Math.max(0, Math.min(pages.length - 1, n));
       const first = cur < 0; dir = dir || (n >= cur ? 'next' : 'prev');
-      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (_) {}
-      speaking = false; document.querySelectorAll('[data-listen]').forEach(b => { b.textContent = t('listen'); });
+      stopVoice();
       const secs = [...stage.children];
       secs.forEach((sc, i) => {
         if (i === n) return;
