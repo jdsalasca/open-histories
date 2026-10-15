@@ -96,22 +96,42 @@
   }
 
   /** Divide `text` en frases: corta tras los terminadores (fuera de etiquetas y marcas),
+   *  no corta dentro de <b>/<i> abiertas ni en abreviaturas ("Mr."),
    *  se lleva los cierres pegados, y `join('')` reconstruye el texto original. */
+  const ABBREV = new Set(['mr', 'mrs', 'ms', 'dr', 'st', 'prof', 'etc', 'vs', 'jr', 'sr']);
+  function isAbbrevEnd(buf) {
+    const m = /([\p{L}]+)\.$/u.exec(buf);
+    if (!m) return false;
+    const w = m[1];
+    return ABBREV.has(w.toLowerCase()) || (w.length === 1 && w === w.toUpperCase());
+  }
   function splitSentences(text) {
     const s = String(text == null ? '' : text);
-    const out = []; let buf = '', i = 0;
+    const out = []; let buf = '', i = 0, depth = 0, pending = false;
     while (i < s.length) {
       const tag = TAG_AT.exec(s.slice(i, i + 5));
-      if (tag) { buf += s.slice(i, i + tag[0].length); i += tag[0].length; continue; }
+      if (tag) {
+        const closing = tag[0][1] === '/';
+        buf += s.slice(i, i + tag[0].length); i += tag[0].length;
+        depth = Math.max(0, depth + (closing ? -1 : 1));
+        if (closing && depth === 0 && pending) {
+          while (i < s.length && CLOSE.has(s[i])) { buf += s[i]; i++; }
+          out.push(buf); buf = ''; pending = false;
+        }
+        continue;
+      }
       if (s.startsWith('{{', i)) {
         const end = s.indexOf('}}', i + 2); const stop = end === -1 ? s.length : end + 2;
         buf += s.slice(i, stop); i = stop; continue;
       }
       buf += s[i]; i++;
       if (TERM.has(s[i - 1])) {
+        if (s[i - 1] === '.' && isAbbrevEnd(buf)) continue;
         while (i < s.length && TERM.has(s[i])) { buf += s[i]; i++; }
         while (i < s.length && CLOSE.has(s[i])) { buf += s[i]; i++; }
-        out.push(buf); buf = '';
+        if (depth > 0) { pending = true; continue; }
+        if (buf.replace(/[。！？…?!.]+$/, '').trim() === '') continue; // p. ej. "……" inicial
+        out.push(buf); buf = ''; pending = false;
       }
     }
     if (buf) out.push(buf);
