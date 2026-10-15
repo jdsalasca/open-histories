@@ -57,7 +57,7 @@ try {
   "rate": 1, "sound": false, "quality": "alta", "motion": "auto", "theme": "light", "terror": true, "view": "read" }
 ```
 
-Variantes: `theme` light/dark · `size` S/M/L/XL · `view` read/study · `lang` es (regresión) · móvil con `--window-size=430,932`.
+Variantes: `theme` light/dark · `size` S/M/L/XL · `view` read/study · `lang` es (regresión) · móvil con `--window-size=500,932` (Chrome en Windows no baja de ~490 de ancho; pedir menos recorta la captura).
 
 3. Capturar (PowerShell):
 
@@ -123,7 +123,7 @@ git add assets/book.css && git commit -m "style: pinyin y traducción más legib
 - Consumes: los valores de Task 1.
 - Produces: la base visual que el modo Estudio (Task 8) respeta.
 
-- [ ] **Paso 1: Capturas "antes"** (zh claro XL · zh oscuro M · móvil 430).
+- [ ] **Paso 1: Capturas "antes"** (zh claro XL · zh oscuro M · móvil 500).
 
 - [ ] **Paso 2: Editar ritmo**
 
@@ -427,7 +427,7 @@ const modeSeg = () => {
 
 - [ ] **Paso 5: Capturas (Anexo A)**
 
-Variantes: `view:'study'` zh claro M · zh oscuro M · zh S · zh XL · móvil 430 · es claro M (regresión).
+Variantes: `view:'study'` zh claro M · zh oscuro M · zh S · zh XL · móvil 500 · es claro M (regresión).
 
 - [ ] **Paso 6: Verificar y commitear**
 
