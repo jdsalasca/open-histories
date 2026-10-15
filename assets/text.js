@@ -66,17 +66,20 @@
     return out;
   }
 
-  /** Decide idioma principal y subtítulo según lo disponible. `available` = {es:true, zh?:true, en?:true}. */
-  function resolveLangs(settings, available) {
+  /** Decide idioma principal y subtítulo según lo disponible.
+   *  `available` = {es:true, zh?:true, …}; `codes` = orden del registro de idiomas (OH.lingo.codes()). */
+  function resolveLangs(settings, available, codes) {
     const notes = [];
     const av = available || {};
+    const valid = (codes && codes.length) ? codes : ['es', 'zh', 'en'];
+    const other = l => valid.find(c => c !== l && av[c]) || null;
     let main = settings && settings.lang;
-    if (!['es', 'zh', 'en'].includes(main)) main = 'es';
-    if (!av[main]) { notes.push(`lang_missing:${main}`); main = 'es'; }
+    if (!valid.includes(main)) main = valid[0];
+    if (!av[main]) { notes.push(`lang_missing:${main}`); main = valid.find(c => av[c]) || valid[0]; }
     let sub = settings && settings.sub;
-    if (!['es', 'en'].includes(sub)) sub = null;
-    if (sub === main) sub = ['es', 'en'].find(l => l !== main && av[l]) || null;
-    if (sub && !av[sub]) { notes.push(`lang_missing:${sub}`); sub = ['es', 'en'].find(l => l !== main && av[l]) || null; }
+    if (sub === 'none' || !valid.includes(sub)) sub = null;
+    if (sub === main) sub = other(main);
+    if (sub && !av[sub]) { notes.push(`lang_missing:${sub}`); sub = other(main); }
     return { main, sub, notes };
   }
 

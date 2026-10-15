@@ -56,6 +56,18 @@ test('resolve_sub_never_equals_main', () => {
   assert.ok(miss.notes.some(n => n.startsWith('lang_missing:en')));
 });
 
+test('resolve_usa_codes_pasados', () => {
+  const r = resolveLangs({ lang: 'fr', sub: 'es' }, { es: true, fr: true }, ['es', 'fr', 'zh']);
+  assert.equal(r.main, 'fr');
+  assert.equal(r.sub, 'es');
+});
+
+test('resolve_cae_al_base_si_falta_el_principal', () => {
+  const r = resolveLangs({ lang: 'fr', sub: 'none' }, { es: true }, ['es', 'fr']);
+  assert.equal(r.main, 'es');
+  assert.ok(r.notes.some(n => n.startsWith('lang_missing:fr')));
+});
+
 const { rubyCheck } = require('../assets/text.js');
 test('rubyCheck_reports_missing_and_leftover_syllables', () => {
   assert.deepEqual(rubyCheck('小兔子', 'xiǎo tù zi'), { missing: 0, leftover: '' });
