@@ -5,12 +5,12 @@
   'use strict';
   const KEY = 'oh-settings';
   const DEFAULTS = Object.freeze({
-    v: 1, lang: 'es', sub: 'none', subMode: 'tap', pinyin: 'tap', size: 'M',
+    v: 1, lang: 'es', sub: 'none', subMode: 'tap', pinyin: 'tap', size: 'M', view: 'read',
     rate: 1, sound: true, quality: 'auto', motion: 'auto', theme: 'auto', terror: true
   });
   const ENUMS = {
     lang: ['es', 'zh', 'en'], sub: ['es', 'en', 'none'], subMode: ['always', 'tap', 'hidden'],
-    pinyin: ['always', 'tap', 'off'], size: ['S', 'M', 'L', 'XL'],
+    pinyin: ['always', 'tap', 'off'], view: ['read', 'study'], size: ['S', 'M', 'L', 'XL'],
     quality: ['auto', 'alta', 'media', 'baja'], motion: ['auto', 'reduce'], theme: ['auto', 'light', 'dark']
   };
 

@@ -52,3 +52,13 @@ test('set_persists_and_notifies_once', () => {
   st.set({ lang: 'en' });
   assert.deepEqual(seen, ['zh']);
 });
+
+test('view_defaults_to_read', () => {
+  assert.equal(normalize({}).view, 'read');
+  assert.equal(DEFAULTS.view, 'read');
+});
+
+test('view_accepts_study_rejects_unknown', () => {
+  assert.equal(normalize({ view: 'study' }).view, 'study');
+  assert.equal(normalize({ view: 'nope' }).view, 'read');
+});

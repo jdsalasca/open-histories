@@ -27,6 +27,7 @@
       ${row(t('subtitles'), seg('sub', [['es', t('lang_es')], ['en', t('lang_en')], ['none', t('none')]], s.sub))}
       ${row(t('sub_show'), seg('subMode', [['always', t('sub_always')], ['tap', t('sub_tap')], ['hidden', t('sub_hidden')]], s.subMode))}
       ${row(t('pinyin'), seg('pinyin', [['always', t('pinyin_always')], ['tap', t('pinyin_tap')], ['off', t('pinyin_off')]], s.pinyin))}
+      ${row(t('view'), seg('view', [['read', t('view_read')], ['study', t('view_study')]], s.view))}
       ${row(t('font_size'), seg('size', [['S', 'S'], ['M', 'M'], ['L', 'L'], ['XL', 'XL']], s.size))}
       ${row(t('voice_speed'), `<span class="prange"><input type="range" min="0.6" max="1.2" step="0.1" value="${s.rate}" data-k="rate" aria-label="${t('voice_speed')}"><output>${s.rate}×</output></span>`)}
       ${row(t('quality'), seg('quality', [['auto', t('q_auto')], ['alta', t('q_high')], ['media', t('q_mid')], ['baja', t('q_low')]], s.quality))}
