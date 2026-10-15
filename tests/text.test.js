@@ -87,6 +87,30 @@ test('splitSentences_does_not_split_inside_markers', () => {
     splitSentences('小燕子{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}走了。第二句。'),
     ['小燕子{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}走了。', '第二句。']);
 });
+
+const { sentencesWithPy } = require('../assets/text.js');
+test('sentencesWithPy_splits_py_along_sentences', () => {
+  assert.deepEqual(
+    sentencesWithPy('他走了。你呢？', 'tā zǒu le。nǐ ne？'),
+    [{ t: '他走了。', py: 'tā zǒu le。' }, { t: '你呢？', py: 'nǐ ne？' }]);
+});
+test('sentencesWithPy_empty_py_for_plain_text', () => {
+  const r = sentencesWithPy('Hola. ¿Y vos?', '');
+  assert.deepEqual(r.map(x => x.py), ['', '']);
+});
+test('sentencesWithPy_corpus_concatenation_and_alignment', () => {
+  let data = null; const prevOH = globalThis.OH;
+  globalThis.OH = { lang: (id, l, d) => { data = d; } };
+  require('../stories/principe-feliz.zh.js');
+  globalThis.OH = prevOH;
+  for (const pg of data.pages) {
+    (pg.text || []).forEach((tx, j) => {
+      const sents = sentencesWithPy(tx, (pg.py || [])[j] || '');
+      assert.equal(sents.map(s => s.t).join(''), tx);
+      for (const s of sents) assert.equal(rubyCheck(s.t, s.py).missing, 0);
+    });
+  }
+});
 test('splitSentences_attaches_closers_and_terminator_runs', () => {
   assert.deepEqual(splitSentences('「我可以爱你吗？」小燕子说。'), ['「我可以爱你吗？」', '小燕子说。']);
   assert.deepEqual(splitSentences('他走了……后来呢？'), ['他走了……', '后来呢？']);

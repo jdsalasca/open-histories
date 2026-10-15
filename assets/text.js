@@ -118,7 +118,18 @@
     return out;
   }
 
-  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs, tagMask, splitSentences };
+  /** Reparte `py` por frase: [{t, py}] — el trozo de pinyin que le toca a cada frase. */
+  function sentencesWithPy(text, py) {
+    let rest = String(py == null ? '' : py);
+    return splitSentences(text).map(t => {
+      const w = walk(t, rest);
+      const slice = rest.slice(0, rest.length - w.rest.length);
+      rest = w.rest;
+      return { t, py: slice };
+    });
+  }
+
+  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs, tagMask, splitSentences, sentencesWithPy };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') { window.OH = window.OH || {}; window.OH.text = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this);
