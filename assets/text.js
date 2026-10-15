@@ -4,6 +4,10 @@
 (function (root) {
   'use strict';
   const CJK = /[㐀-䶿一-鿿豈-﫿]/;
+  // segmentación de frases: terminadores, cierres que se pegan, y etiquetas que se respetan
+  const TERM = new Set([...'。！？…?!.']);
+  const CLOSE = new Set([...'」』”"’）)']);
+  const TAG_AT = /^<\/?[bi]>/;
   // letras de pinyin con marcas de tono (Latin-1/Extendido) y marcas combinantes
   const PINYIN_LETTER = /[A-Za-zÀ-ɏḀ-ỿ̀-ͯ]/;
 
@@ -91,7 +95,30 @@
     return mask;
   }
 
-  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs, tagMask };
+  /** Divide `text` en frases: corta tras los terminadores (fuera de etiquetas y marcas),
+   *  se lleva los cierres pegados, y `join('')` reconstruye el texto original. */
+  function splitSentences(text) {
+    const s = String(text == null ? '' : text);
+    const out = []; let buf = '', i = 0;
+    while (i < s.length) {
+      const tag = TAG_AT.exec(s.slice(i, i + 5));
+      if (tag) { buf += s.slice(i, i + tag[0].length); i += tag[0].length; continue; }
+      if (s.startsWith('{{', i)) {
+        const end = s.indexOf('}}', i + 2); const stop = end === -1 ? s.length : end + 2;
+        buf += s.slice(i, stop); i = stop; continue;
+      }
+      buf += s[i]; i++;
+      if (TERM.has(s[i - 1])) {
+        while (i < s.length && TERM.has(s[i])) { buf += s[i]; i++; }
+        while (i < s.length && CLOSE.has(s[i])) { buf += s[i]; i++; }
+        out.push(buf); buf = '';
+      }
+    }
+    if (buf) out.push(buf);
+    return out;
+  }
+
+  const api = { rubyPairs, rubyCheck, markGlossary, resolveLangs, tagMask, splitSentences };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') { window.OH = window.OH || {}; window.OH.text = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -72,3 +72,29 @@ test('tagMask_marks_only_b_and_i_tags', () => {
   assert.equal(raw, '<b></b><i></i>');
   assert.equal(tagMask('a < b').some(Boolean), false);
 });
+
+const { splitSentences } = require('../assets/text.js');
+test('splitSentences_partitions_zh_sentences', () => {
+  assert.deepEqual(
+    splitSentences('一天晚上，一只小燕子飞过这座城市。他的朋友们走了。'),
+    ['一天晚上，一只小燕子飞过这座城市。', '他的朋友们走了。']);
+});
+test('splitSentences_does_not_split_inside_b_i_tags', () => {
+  assert.deepEqual(splitSentences('他<b>哭</b>了。第二句。'), ['他<b>哭</b>了。', '第二句。']);
+});
+test('splitSentences_does_not_split_inside_markers', () => {
+  assert.deepEqual(
+    splitSentences('小燕子{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}走了。第二句。'),
+    ['小燕子{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}走了。', '第二句。']);
+});
+test('splitSentences_attaches_closers_and_terminator_runs', () => {
+  assert.deepEqual(splitSentences('「我可以爱你吗？」小燕子说。'), ['「我可以爱你吗？」', '小燕子说。']);
+  assert.deepEqual(splitSentences('他走了……后来呢？'), ['他走了……', '后来呢？']);
+});
+test('splitSentences_splits_es_after_period_space', () => {
+  assert.deepEqual(splitSentences('Hola. ¿Y vos?'), ['Hola.', ' ¿Y vos?']);
+});
+test('splitSentences_concatenation_preserves_original', () => {
+  const t = '天黑啦，小燕子说：「我要去埃及……」。第二段。';
+  assert.equal(splitSentences(t).join(''), t);
+});
