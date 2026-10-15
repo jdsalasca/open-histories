@@ -170,12 +170,19 @@ svg g[filter] :is(path,rect,polygon,circle,ellipse):not([stroke]){stroke:rgba(25
   .nav{padding:12px 16px 20px}.topbar{padding:14px 18px 0}.progress{margin:8px 18px 0}.page{padding:18px 18px 8px}
   .btn{padding:11px 16px}
 }
+@media (max-width:560px){
+  .topbar{flex-wrap:wrap;gap:6px}
+  .topbar>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 100%}
+  .topbar .r{flex:1 1 100%;justify-content:flex-end;gap:8px}
+  .snd{white-space:nowrap}
+  #pageNum{white-space:nowrap}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 
 /* ── open-histories: lector ── */
 .back{color:#8a6a40;text-decoration:none;font-weight:800;letter-spacing:.06em}
 .back:hover{color:var(--ruby)}
-.txt{max-height:min(46vh,430px);overflow:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:#d8bf8d transparent}
+.txt{max-height:min(48vh,470px);overflow:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:#d8bf8d transparent}
 .txt::-webkit-scrollbar{width:8px}.txt::-webkit-scrollbar-thumb{background:#d8bf8d;border-radius:6px}
 .txt p:last-child{margin-bottom:0}
 .credit{font-size:.82rem;color:#8a6a40;line-height:1.4}
@@ -252,8 +259,8 @@ body:is(.terror,.dark){background:radial-gradient(circle at 50% -10%,#3a1f4a,tra
 :root{--zh:"Noto Sans SC","PingFang SC","Microsoft YaHei","Source Han Sans SC","WenQuanYi Micro Hei",sans-serif}
 html[data-size="S"]{font-size:14.5px}html[data-size="L"]{font-size:18px}html[data-size="XL"]{font-size:20px}
 .note-bar{margin:8px 28px 0;padding:6px 12px;border-radius:10px;background:#fff1c9;color:#5a3d12;font-size:.85rem;font-weight:700}
-.para{margin:0 0 .85em;padding:2px 6px;border-radius:10px;cursor:pointer;transition:background .15s}
-.para:hover{background:rgba(233,185,66,.13)}
+.para{margin:0 0 1em;padding:2px 6px;border-radius:10px;cursor:pointer;transition:background .15s}
+.para:hover{background:rgba(233,185,66,.16)}
 .para .main{margin:0;font-size:1.06rem;line-height:1.62}
 .para .main.lang-zh{font-family:var(--zh);font-size:1.28rem;line-height:2.3}
 .para .subt{display:none;margin:.5em 0 0;padding:8px 12px;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;background:rgba(233,185,66,.1);font-size:.9rem;line-height:1.6;font-style:normal;opacity:1}
