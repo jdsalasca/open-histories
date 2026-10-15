@@ -204,6 +204,8 @@ test('no parte dentro de etiquetas <b>/<i>', () => assert.deepEqual(
 test('no parte dentro de marcas {{…}} aunque la definición lleve puntos', () => assert.deepEqual(
   splitSentences('{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}小燕子走了。'),
   ['{{迁徙|鸟儿飞到别的地方，找更暖和的天气。}}', '小燕子走了。']));
+// NOTA (post-ejecución): este caso quedó reescrito a una marca DENTRO de la oración por ruling del ledger,
+// porque las marcas no son frontera de frase: ver .superpowers/sdd/2026-10-14-modo-chino/progress.md (Task 4).
 test('cierres pegados y ristras de terminadores', () => {
   assert.deepEqual(splitSentences('「我可以爱你吗？」小燕子说。'), ['「我可以爱你吗？」', '小燕子说。']);
   assert.deepEqual(splitSentences('他走了……后来呢？'), ['他走了……', '后来呢？']);
