@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { DEFAULTS, normalize, createStore } = require('../assets/settings.js');
+const { DEFAULTS, ENUMS, normalize, createStore } = require('../assets/settings.js');
 
 const memStorage = (init = {}) => {
   const d = { ...init };
@@ -24,10 +24,16 @@ test('normalize_clamps_rate_and_rejects_unknown_enums', () => {
 });
 
 test('sub_never_equals_lang', () => {
-  assert.notEqual(normalize({ lang: 'zh', sub: 'zh' }).sub, 'zh'); // 'zh' no es subtítulo válido (spec §3)
-  assert.equal(normalize({ lang: 'es', sub: 'es' }).sub, 'en');
+  assert.notEqual(normalize({ lang: 'zh', sub: 'zh' }).sub, 'zh'); // el subtítulo nunca es igual al principal (spec §3)
+  assert.equal(normalize({ lang: 'es', sub: 'es' }).sub, 'zh'); // primer código del registro ≠ es
   assert.equal(normalize({ lang: 'en', sub: 'en' }).sub, 'es');
   assert.equal(normalize({ lang: 'zh', sub: 'none' }).sub, 'none');
+});
+
+test('enums_salen_del_registro_de_idiomas', () => {
+  const codes = require('../assets/langs.js').codes();
+  assert.deepEqual(ENUMS.lang, codes);
+  assert.deepEqual(ENUMS.sub, [...codes, 'none']);
 });
 
 test('load_survives_corrupt_json_and_missing_storage', () => {

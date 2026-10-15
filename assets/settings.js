@@ -4,12 +4,16 @@
 (function (root) {
   'use strict';
   const KEY = 'oh-settings';
+  /* idiomas: registro OH.lingo (langs.js carga antes en el navegador) o require en Node; fallback estático */
+  const lingo = (root && root.OH && root.OH.lingo) || (typeof require === 'function' ? require('./langs.js') : null);
+  const CODES = (lingo && lingo.codes()) || ['es', 'zh', 'en'];
+  const BASE = (lingo && lingo.base()) || 'es';
   const DEFAULTS = Object.freeze({
-    v: 1, lang: 'es', sub: 'none', subMode: 'tap', pinyin: 'tap', size: 'M', view: 'read',
+    v: 1, lang: BASE, sub: 'none', subMode: 'tap', pinyin: 'tap', size: 'M', view: 'read',
     rate: 1, sound: true, quality: 'auto', motion: 'auto', theme: 'auto', terror: true
   });
   const ENUMS = {
-    lang: ['es', 'zh', 'en'], sub: ['es', 'en', 'none'], subMode: ['always', 'tap', 'hidden'],
+    lang: CODES, sub: [...CODES, 'none'], subMode: ['always', 'tap', 'hidden'],
     pinyin: ['always', 'tap', 'off'], view: ['read', 'study'], size: ['S', 'M', 'L', 'XL'],
     quality: ['auto', 'alta', 'media', 'baja'], motion: ['auto', 'reduce'], theme: ['auto', 'light', 'dark']
   };
@@ -22,7 +26,7 @@
     s.rate = Number.isFinite(rate) ? Math.min(1.2, Math.max(0.6, rate)) : DEFAULTS.rate;
     s.sound = typeof r.sound === 'boolean' ? r.sound : DEFAULTS.sound;
     s.terror = typeof r.terror === 'boolean' ? r.terror : DEFAULTS.terror;
-    if (s.sub !== 'none' && s.sub === s.lang) s.sub = s.lang === 'es' ? 'en' : 'es';
+    if (s.sub !== 'none' && s.sub === s.lang) s.sub = CODES.find(c => c !== s.lang) || 'none';
     return s;
   }
 
