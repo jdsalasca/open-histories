@@ -3,6 +3,58 @@
 Lee esto entero antes de tocar nada. Está escrito para que **cualquier agente** (de cualquier modelo) haga bien el trabajo
 y para que una revisión posterior sea rápida.
 
+## 0. Briefing en 60 segundos (para Codex, Astra, Fable, DeepSeek, Claude… cualquiera)
+
+**La iniciativa.** `open-histories` es una biblioteca abierta de cuentos clásicos de dominio público que se leen en el
+navegador como libros de papel recortado animados, **completos** y en tres idiomas (español, 中文 graduado e inglés).
+Sirve para dos cosas a la vez: leer con gusto y **aprender chino** leyendo (pinyin, subtítulos, glosario). Hay un
+Rincón del terror (+12) para clásicos de miedo. La persona dueña la usa para estudiar chino y la quiere
+**bonita, fluida y usable sin conexión**; más adelante crecerá con cuentos avanzados y poesía china.
+
+**Qué se espera de ti.** Añadir cuentos (o mejorar lo existente) siguiendo la receta del §5, con la calidad del §0.2, y
+publicar solo cuando el §9 esté completo. Una segunda persona/agente revisa antes de dar por bueno.
+
+### 0.1 Cómo cargar un cuento (resumen; detalle en §5)
+
+1. Original de dominio público (Gutenberg) → traduce al español **completo**.
+2. `stories/<id>.js`: escenas SVG con el kit + `pages` + `quiz`.
+3. `content/<id>.zh.json` y `<id>.en.json` con **los mismos párrafos por página**.
+4. `uv run --with pypinyin python tools/pinyin.py content/<id>.zh.json` (y `.en.json`) → genera `stories/*.zh.js/.en.js`.
+5. Catálogo (`stories/catalog.js`) + emblema (`index.html`) + README.
+6. `node --test tests/*.test.js` · `unittest` · `node tools/validate.js` en verde y **mirar cada escena en el navegador**.
+
+### 0.2 La calidad que se busca (si dudas, esto manda)
+
+- **Fiel y completo**: es el cuento, no un resumen; el lenguaje de época se respeta.
+- **Chino claro para estudiar**: frases cortas, vocabulario HSK 1–4, pinyin correcto (sin partículas mal leídas),
+  glosario útil de ~15 palabras. Nada de chino "traducido literal" que suene raro.
+- **Papercraft cuidado, no genérico**: capas con profundidad, un protagonista por escena, movimiento con intención
+  (arcos, pasos tipo stop-motion), sin destellos masivos ni parpadeos en todo. Cada escena debe *contar* algo del texto.
+- **Fluido**: debe ir bien en equipos modestos; respeta los niveles de calidad y no dibujes de más.
+- **Accesible y didáctico**: tooltips de vocabulario, preguntas para pensar, quiz de 3 preguntas, texto legible en móvil.
+- **Seguro para menores**: terror sin imágenes gráficas, con aviso y `age:12`.
+- **Sin deuda**: tests verdes, validador verde, sin secretos, commits claros.
+
+### 0.3 Cómo se publica (y por qué hay que tener cuidado)
+
+Hay **dos destinos**, y el segundo es **PRODUCCIÓN**:
+
+| Destino | Qué es | Cómo |
+|---|---|---|
+| **GitHub** (`jdsalasca/open-histories`, público) | Código y contenido; GitHub Pages es un espejo | `git push origin main` |
+| **https://library.eridu.top** | **Servidor productivo real**, ya con usuarios (la persona dueña y quien reciba el enlace) | `./deploy.sh atopnuc@192.168.1.100:/home/atopnuc/sitios/open-histories` |
+
+- El subdominio `library.eridu.top` está en Cloudflare y entra por un **túnel propio** a un servicio de usuario
+  (`oh-server.py`, puerto 8090) en el servidor `192.168.1.100`. Comparte máquina con **otros sitios en producción**
+  (`hotel.eridu.top`, `bogota-mitos.eridu.top`): jamás los toques.
+- `deploy.sh` ya hace lo seguro: corre tests y validador (si fallan, **no despliega**), guarda la copia anterior en
+  `…/open-histories.prev` y copia solo lo publicable. Reversa inmediata: `./deploy.sh --rollback atopnuc@192.168.1.100:/home/atopnuc/sitios/open-histories`.
+- **Antes de desplegar**: tests/validador en verde, escenas vistas en local, `git status` limpio (todo commiteado y pusheado).
+- **Después**: `curl -s "https://library.eridu.top/assets/build.js?x=$(date +%s)"` debe mostrar el hash de tu commit; abre el
+  cuento nuevo en 3 idiomas; `https://hotel.eridu.top` debe seguir en 200. Si algo se ve mal: **rollback primero, depurar después**.
+- No tienes (ni necesitas) `sudo`, ni acceso a Cloudflare, ni a credenciales. Si crees que lo necesitas, para y pregunta.
+- La caché de Cloudflare puede mostrar archivos viejos un rato: usa `?x=<timestamp>` para comprobar y recarga con Ctrl+F5.
+
 ## 1. Qué es esto
 
 Biblioteca web **estática** (sin compilación) de cuentos clásicos de **dominio público**, completos, en español,
