@@ -255,17 +255,18 @@ html[data-size="S"]{font-size:14.5px}html[data-size="L"]{font-size:18px}html[dat
 .para{margin:0 0 .85em;padding:2px 6px;border-radius:10px;cursor:pointer;transition:background .15s}
 .para:hover{background:rgba(233,185,66,.13)}
 .para .main{margin:0;font-size:1.06rem;line-height:1.62}
-.para .main.lang-zh{font-family:var(--zh);font-size:1.28rem;line-height:2.15}
-.para .subt{display:none;margin:.3em 0 0;padding-left:9px;border-left:3px solid var(--gold);font-size:.92rem;line-height:1.5;opacity:.82;font-style:italic}
+.para .main.lang-zh{font-family:var(--zh);font-size:1.28rem;line-height:2.3}
+.para .subt{display:none;margin:.5em 0 0;padding:8px 12px;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;background:rgba(233,185,66,.1);font-size:.9rem;line-height:1.6;font-style:normal;opacity:1}
+:is(.terror,.dark) .para .subt{background:rgba(155,120,255,.12);border-left-color:#9b7cff}
 .stage[data-submode="always"] .para .subt,.para.open .subt{display:block}
 .stage[data-submode="hidden"] .para .subt{display:none}
 ruby{ruby-position:over}
-rt{display:none;font-family:var(--sans);font-size:.5em;letter-spacing:.02em;color:#8a6a40;font-style:normal}
+rt{display:none;font-family:var(--sans);font-size:.55em;letter-spacing:.02em;color:#9a7850;font-weight:600;line-height:1;font-style:normal}
 .stage[data-pinyin="always"] rt,.para.open rt{display:ruby-text}
 .stage[data-pinyin="off"] rt{display:none!important}
 .v.zhw{border-bottom-style:solid}
 .v.saved::before{content:"⭐";position:absolute;top:-1.3em;left:50%;transform:translateX(-50%);font-size:.6em}
-:is(.terror,.dark) rt{color:#c9a8ff}.terror .para:hover{background:rgba(190,120,255,.12)}.terror .note-bar{background:#33224a;color:#ecdcff}
+:is(.terror,.dark) rt{color:#cbb2f5}.terror .para:hover{background:rgba(190,120,255,.12)}.terror .note-bar{background:#33224a;color:#ecdcff}
 
 /* ── calidad: nivel Baja usa una sombra CSS barata en lugar de filtros SVG ── */
 .pcut{filter:drop-shadow(1px 3px 2px rgba(10,10,30,.5))}
