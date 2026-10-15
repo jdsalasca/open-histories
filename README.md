@@ -91,7 +91,7 @@ node tools/validate.js
 > **El chino lo escribió una IA y no ha tenido revisión nativa todavía**: si eres hablante nativo y ves algo raro,
 > abre un *issue* o un *pull request* con la corrección en `content/`.
 
-¿Quieres sumar un cuento, un idioma o poesía? Lee [CONTRIBUTING.md](CONTRIBUTING.md).
+¿Quieres sumar un cuento, un idioma o poesía? Lee [CONTRIBUTING.md](CONTRIBUTING.md). Si eres un agente de IA, empieza por [AGENTS.md](AGENTS.md).
 
 ## Publicación
 
