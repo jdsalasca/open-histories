@@ -23,40 +23,47 @@ function validateCatalog(catalog, fileExists) {
 }
 
 const { rubyCheck } = require('../assets/text.js');
+const { annotated, base: BASE_LANG } = require('../assets/langs.js');
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/;
 
-/** Valida un cuento en varios idiomas: {es, zh?, en?} con pages/quiz/glossary. Devuelve lista de errores. */
+/** Valida un cuento en varios idiomas: texto base + los idiomas presentes ({zh?, en?, fr?, …}).
+ *  La anotación (pinyin) y el glosario se validan solo para los idiomas del registro con `annotate`. */
 function validateStory(id, langs) {
   const errors = [];
-  const es = langs.es;
-  if (!es || !Array.isArray(es.pages)) return [`${id}: falta el texto base en español`];
-  for (const L of ['zh', 'en']) {
+  const BASE = BASE_LANG();
+  const est = langs[BASE];
+  if (!est || !Array.isArray(est.pages)) return [`${id}: falta el texto base (${BASE})`];
+  const anotados = annotated();
+  for (const L of Object.keys(langs)) {
+    if (L === BASE) continue;
     const d = langs[L];
     if (!d) continue;
     if (typeof d.title !== 'string' || !d.title) errors.push(`${id}: ${L} sin title`);
     if (!Array.isArray(d.pages)) { errors.push(`${id}: ${L} sin pages`); continue; }
-    if (d.pages.length !== es.pages.length) errors.push(`${id}: ${L} tiene ${d.pages.length} páginas y es tiene ${es.pages.length}`);
-    const n = Math.min(d.pages.length, es.pages.length);
+    if (d.pages.length !== est.pages.length) errors.push(`${id}: ${L} tiene ${d.pages.length} páginas y ${BASE} tiene ${est.pages.length}`);
+    const n = Math.min(d.pages.length, est.pages.length);
     for (let i = 0; i < n; i++) {
-      const a = es.pages[i].text || [], b = d.pages[i].text || [];
-      if (a.length !== b.length) errors.push(`${id}: ${L} página ${i + 1} tiene ${b.length} párrafos y es tiene ${a.length}`);
-      if (L === 'zh') {
+      const a = est.pages[i].text || [], b = d.pages[i].text || [];
+      if (a.length !== b.length) errors.push(`${id}: ${L} página ${i + 1} tiene ${b.length} párrafos y ${BASE} tiene ${a.length}`);
+      if (anotados.includes(L)) {
         const py = d.pages[i].py;
-        if (!Array.isArray(py) || py.length !== b.length) { errors.push(`${id}: zh página ${i + 1} sin pinyin (py) alineado con text`); continue; }
+        if (!Array.isArray(py) || py.length !== b.length) { errors.push(`${id}: ${L} página ${i + 1} sin pinyin (py) alineado con text`); continue; }
         b.forEach((text, j) => {
           const c = rubyCheck(text, py[j]);
-          if (c.missing || c.leftover) errors.push(`${id}: pinyin desalineado en zh página ${i + 1} párrafo ${j + 1} (faltan ${c.missing}, sobra "${c.leftover}")`);
+          if (c.missing || c.leftover) errors.push(`${id}: pinyin desalineado en ${L} página ${i + 1} párrafo ${j + 1} (faltan ${c.missing}, sobra "${c.leftover}")`);
         });
       }
     }
-    const qa = (es.quiz || []).length, qb = (d.quiz || []).length;
-    if (qa !== qb) errors.push(`${id}: ${L} tiene ${qb} preguntas de quiz y es tiene ${qa}`);
+    const qa = (est.quiz || []).length, qb = (d.quiz || []).length;
+    if (qa !== qb) errors.push(`${id}: ${L} tiene ${qb} preguntas de quiz y ${BASE} tiene ${qa}`);
   }
-  if (langs.zh && Array.isArray(langs.zh.glossary)) {
-    const all = (langs.zh.pages || []).flatMap(p => p.text || []).join('\n');
-    langs.zh.glossary.forEach((g, k) => {
-      if (!g.h || !g.es) errors.push(`${id}: glosario zh #${k + 1} incompleto`);
-      else if (!all.includes(g.h)) errors.push(`${id}: la palabra del glosario "${g.h}" no aparece en el texto zh`);
+  for (const L of anotados) {
+    const d = langs[L];
+    if (!d || !Array.isArray(d.glossary)) continue;
+    const all = (d.pages || []).flatMap(p => p.text || []).join('\n');
+    d.glossary.forEach((g, k) => {
+      if (!g.h || !g.es) errors.push(`${id}: glosario ${L} #${k + 1} incompleto`);
+      else if (!all.includes(g.h)) errors.push(`${id}: la palabra del glosario "${g.h}" no aparece en el texto ${L}`);
       else if (!g.py || !CJK.test(g.h)) errors.push(`${id}: glosario "${g.h}" sin pinyin`);
     });
   }
@@ -74,10 +81,10 @@ function loadStory(root, entry) {
   run('assets/kit.js');
   const out = {};
   for (const f of entry.files) {
-    const code = f === `${entry.id}.js` ? 'es' : (f.match(/\.(zh|en)\.js$/) || [])[1];
+    const code = f === `${entry.id}.js` ? BASE_LANG() : (f.match(/\.([a-z][a-z0-9-]*)\.js$/) || [])[1];
     if (!code) continue;
     run(`stories/${f}`);
-    if (code === 'es') { const st = vm.runInContext(`OH.registry['${entry.id}']`, ctx); out.es = st; }
+    if (code === BASE_LANG()) { const st = vm.runInContext(`OH.registry['${entry.id}']`, ctx); out[code] = st; }
     else out[code] = vm.runInContext(`OH.langs['${entry.id}']['${code}']`, ctx);
   }
   return out;

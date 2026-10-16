@@ -66,3 +66,23 @@ test('story_error_when_page_or_quiz_count_differs', () => {
   assert.ok(errs.some(e => /en.*páginas/i.test(e)));
   assert.ok(errs.some(e => /zh.*quiz/i.test(e)));
 });
+
+test('story_ok_with_lang_extra_sin_py', () => {
+  const s = base();
+  s.fr = { title: 't', pages: [{ text: ['a', 'b'] }, { text: ['c'] }], quiz: [{ q: '?' }] };
+  assert.deepEqual(validateStory('demo', s), []);
+});
+
+test('story_error_when_extra_lang_misaligned', () => {
+  const s = base();
+  s.fr = { title: 't', pages: [{ text: ['a'] }, { text: ['c'] }], quiz: [{ q: '?' }] };
+  const errs = validateStory('demo', s);
+  assert.ok(errs.some(e => /demo.*fr.*página 1.*párrafos/i.test(e)), errs.join('|'));
+});
+
+test('story_error_when_extra_lang_without_title', () => {
+  const s = base();
+  s.fr = { pages: [{ text: ['a', 'b'] }, { text: ['c'] }], quiz: [{ q: '?' }] };
+  const errs = validateStory('demo', s);
+  assert.ok(errs.some(e => /demo.*fr.*title/i.test(e)), errs.join('|'));
+});
