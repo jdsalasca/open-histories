@@ -16,7 +16,7 @@
 
   /** La cáscara de la aplicación: lo mínimo para abrir la repisa y el lector sin conexión. */
   function shellFiles() {
-    const assets = ['kit.js', 'settings.js', 'i18n.js', 'text.js', 'words.js', 'perf.js', 'offline.js', 'panel.js', 'reader.js', 'build.js',
+    const assets = ['langs.js', 'kit.js', 'settings.js', 'i18n.js', 'text.js', 'words.js', 'perf.js', 'offline.js', 'panel.js', 'reader.js', 'build.js',
       'book.css', 'shelf.css', 'panel.css', 'fonts.css',
       'fonts/Nunito-normal-400.woff2', 'fonts/PlayfairDisplay-normal-600.woff2', 'fonts/PlayfairDisplay-italic-500.woff2',
       'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon.svg'].map(f => `assets/${f}`);
@@ -33,7 +33,11 @@
     api.supported = supported;
     api.isOnline = () => navigator.onLine !== false;
     const cat = () => (window.OH && window.OH.catalog) || [];
-    const langsWanted = () => { const s = window.OH.settings ? window.OH.settings.get() : {}; return ['zh', 'en'].filter(l => l === s.lang || l === s.sub); };
+    const langsWanted = () => {
+      const s = (window.OH.settings && window.OH.settings.get()) || {};
+      const L = (window.OH.lingo && window.OH.lingo.codes) ? window.OH.lingo : { codes: () => ['es', 'zh', 'en'], base: () => 'es' };
+      return L.codes().filter(c => c !== L.base() && (c === s.lang || c === s.sub));
+    };
 
     async function fetchInto(files, onProgress) {
       if (!supported) return;

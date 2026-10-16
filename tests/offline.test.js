@@ -22,7 +22,7 @@ test('filesFor_skips_missing_lang_files', () => {
 
 test('shellFiles_lists_assets_audio_fonts_catalog', () => {
   const f = shellFiles();
-  for (const must of ['index.html', 'read.html', 'manifest.webmanifest', 'stories/catalog.js', 'assets/kit.js',
+  for (const must of ['index.html', 'read.html', 'manifest.webmanifest', 'stories/catalog.js', 'assets/kit.js', 'assets/langs.js',
     'assets/reader.js', 'assets/settings.js', 'assets/fonts.css', 'assets/book.css', 'audio/page-turn.mp3'])
     assert.ok(f.includes(must), `falta ${must}`);
   assert.equal(new Set(f).size, f.length, 'sin duplicados');
