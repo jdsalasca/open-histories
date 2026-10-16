@@ -162,7 +162,7 @@ Prueba de que no hace falta lógica: `tests/langs.test.js` agrega `fr` al regist
 - **Service worker**: no se puede probar en el panel integrado de Claude Desktop; pruébalo en Chrome/Firefox normal
   (HTTPS o `localhost`).
 - **Terror**: ni gore ni imágenes explícitas en las escenas; aviso `warning` y `age:12`.
-- **Settings**: el subtítulo válido es `es | en | none` y nunca igual al idioma principal.
+- **Settings**: el subtítulo válido es cualquier código del registro (`assets/langs.js`) distinto del principal, o `none`.
 
 ## 7. Publicar
 

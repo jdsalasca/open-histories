@@ -12,7 +12,7 @@
    - Genera los archivos del sitio: `uv run --with pypinyin python tools/pinyin.py content/<id>.zh.json`
      (calcula el pinyin; las excepciones van en `tools/pinyin-overrides.json`).
    - Revisa lecturas dudosas: `python tools/pinyin_review.py stories/<id>.zh.js`.
-4. **Añade el libro** a `stories/catalog.js` (estante, nivel, título en es/zh/en, archivos) y su emblema en `index.html`.
+4. **Añade el libro** a `stories/catalog.js` (estante, nivel, título por idioma del registro, archivos) y su emblema en `index.html`.
 5. **Valida**: `node --test tests/*.test.js && node tools/validate.js`. Debe salir en verde.
 6. Abre un *pull request*.
 
