@@ -134,6 +134,19 @@ En Windows usa `PYTHONIOENCODING=utf-8` si imprimes chino. No instales Python/No
 | La pata de mono (W. W. Jacobs) | terror | Gutenberg (buscar *The Monkey's Paw*, 1902) |
 | Cuentos más avanzados y **poesía china** | nuevos estantes | ver spec §7 (extensibilidad) |
 
+## 5c. Añadir un idioma (motor N idiomas)
+
+Desde la Fase 2 el motor es data-driven: **sumar un idioma = config + archivos, sin tocar lógica**.
+
+1. **Registro** (`assets/langs.js`): añade `META.<código> = { name: '<endónimo>', tts: '<voz>' }`; si tiene anotación por carácter (como el pinyin del chino) agrega `annotate: 'pinyin'`; el idioma base lleva `base: true` (uno solo).
+2. **Contenido**: `content/<id>.<código>.json` con el **mismo número de páginas y párrafos** que el español (`title`, `tagline`, `intro`, `moral`, `pages`, `quiz`, `word`/`think`; `glossary` si el idioma tiene anotación).
+3. **Genera**: `uv run --with pypinyin python tools/pinyin.py content/<id>.<código>.json` → `stories/<id>.<código>.js` (sin `py` si no es chino).
+4. **Catálogo** (`stories/catalog.js`): agrega el código a `langs`, el archivo a `files` y el título a `title.<código>`.
+5. **Interfaz (opcional)**: las cadenas de ese idioma en `assets/i18n.js`; si faltan, caen a español y el nombre en la ruedita sale del registro.
+6. **Valida**: `node --test tests/*.test.js` y `node tools/validate.js` (valida todos los idiomas del catálogo).
+
+Prueba de que no hace falta lógica: `tests/langs.test.js` agrega `fr` al registro y verifica que ajustes y resolución de idiomas lo aceptan.
+
 ## 6. Trampas ya encontradas (no las repitas)
 
 - **Pinyin**: `pypinyin` falla con partículas `地/得`, `只` (zhī/zhǐ), `更`, `给`, `种`, `倒`, `着`. `tools/pinyin.py` tiene

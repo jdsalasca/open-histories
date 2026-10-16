@@ -18,7 +18,7 @@
 
 ## Un idioma nuevo
 
-Añade `<id>.<código>.js` (mismo formato que `.en.js`) y las cadenas de interfaz en `assets/i18n.js`. El motor no cambia.
+Sumar un idioma no toca la lógica del motor. En corto: entrada en `assets/langs.js`, `content/<id>.<código>.json` (mismas páginas y párrafos que el español), `uv run --with pypinyin python tools/pinyin.py content/<id>.<código>.json`, y catálogo (`langs`, `files`, `title.<código>`). Las cadenas de interfaz son opcionales (caen a español). La receta completa está en `AGENTS.md` §5c.
 
 ## Reglas
 

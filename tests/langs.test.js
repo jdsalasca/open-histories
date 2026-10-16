@@ -14,3 +14,16 @@ test('lingo_codes_base_and_annotated', () => {
 test('lingo_no_pisa_OH_langs (datos de cuentos)', () => {
   assert.equal(globalThis.OH && globalThis.OH.langs, undefined);
 });
+
+test('agregar_solo_META_habilita_el_idioma_en_el_motor', () => {
+  lingo.META.fr = { name: 'Français', tts: 'fr-FR' };
+  const { ENUMS, normalize } = require('../assets/settings.js');
+  assert.ok(ENUMS.lang.includes('fr'));
+  assert.equal(normalize({ lang: 'fr' }).lang, 'fr');
+  assert.equal(normalize({ lang: 'fr', sub: 'fr' }).sub, 'es');
+  const { resolveLangs } = require('../assets/text.js');
+  const r = resolveLangs({ lang: 'fr', sub: 'es' }, { es: true, fr: true }, lingo.codes());
+  assert.equal(r.main, 'fr');
+  assert.equal(r.sub, 'es');
+  delete lingo.META.fr;
+});
