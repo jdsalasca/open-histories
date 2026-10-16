@@ -1,5 +1,5 @@
 /* open-histories · reader.js — lector de un cuento (read.html?s=<id>)
- * Idiomas: principal (es | zh | en) + subtítulo (es | en | ninguno), pinyin con <ruby> y glosario.
+ * Idiomas: principal + subtítulo, según el registro (assets/langs.js); ruby/anotación y glosario por particularidad del idioma.
  */
 (function () {
   'use strict';
@@ -9,7 +9,9 @@
   const id = (qs.get('s') || location.hash.slice(1) || '').toLowerCase();
   const base = ['stories/', 'tests/fixtures/'].includes(qs.get('base')) ? qs.get('base') : 'stories/';
   const stage = $('#stage');
-  const TTS = { es: 'es-ES', zh: 'zh-CN', en: 'en-US' };
+  /* registro de idiomas (langs.js carga antes); fallback estático por robustez de carga */
+  const LINGO = (OH.lingo && OH.lingo.codes) ? OH.lingo : { codes: () => ['es', 'zh', 'en'], base: () => 'es', annotated: () => [], get: () => ({}) };
+  const ttsFor = c => LINGO.get(c).tts || LINGO.get(LINGO.base()).tts || 'es-ES';
 
   /* parámetros de depuración: ?lang=zh&sub=es&pinyin=always&view=study (se guardan como ajustes) */
   const patch = {};
@@ -42,21 +44,21 @@
     const studyText = new Map();
 
     /* ── datos por idioma ── */
-    const dataOf = code => code === 'es'
+    const dataOf = code => code === LINGO.base()
       ? { title: st.title, tagline: st.tagline, intro: st.intro, moral: st.moral, pages: st.pages, quiz: st.quiz, glossary: [] }
       : ((OH.langs || {})[st.id] || {})[code];
-    const have = () => { const a = { es: true }; Object.keys((OH.langs || {})[st.id] || {}).forEach(c => { a[c] = true; }); return a; };
+    const have = () => { const a = {}; a[LINGO.base()] = true; Object.keys((OH.langs || {})[st.id] || {}).forEach(c => { a[c] = true; }); return a; };
     async function ensureLangs() {
       const s = S.get();
-      const want = [s.lang, s.sub].filter(l => l && l !== 'none' && l !== 'es' && !dataOf(l));
+      const want = [s.lang, s.sub].filter(l => l && l !== 'none' && l !== LINGO.base() && !dataOf(l));
       await Promise.all([...new Set(want)].map(l => loadScript(`${base}${st.id}.${l}.js`)));
-      lang = TX.resolveLangs(s, have());
+      lang = TX.resolveLangs(s, have(), LINGO.codes());
     }
     const t = (k) => I.t(k, lang.main);
 
     /* ── render de cada párrafo ── */
     function mainHTML(text, py, L, gl) {
-      if (L !== 'zh') return vocab(text);
+      if (LINGO.get(L).annotate !== 'pinyin') return vocab(text);
       const chunks = TX.markGlossary(text, gl);
       const pairs = TX.rubyPairs(text, py);
       const tags = TX.tagMask(text);
@@ -87,10 +89,10 @@
     function renderCopy(i) {
       const p = pages[i], sec = stage.children[i];
       const copy = sec.querySelector('.copy'); if (!copy) return;
-      const L = lang.main, ES = dataOf('es'), D = dataOf(L) || ES, SUB = lang.sub ? dataOf(lang.sub) : null;
+      const L = lang.main, ES = dataOf(LINGO.base()), D = dataOf(L) || ES, SUB = lang.sub ? dataOf(lang.sub) : null;
       const gl = (D.glossary || []);
       if (p.kind === 'cover') {
-        copy.innerHTML = `<div class="chap">${L === 'es' ? 'Un cuento de ' : ''}${esc(st.author)}</div><h1 class="cover-title">${titleHTML(D.title || st.title)}</h1>
+        copy.innerHTML = `<div class="chap">${t('by_author')}${esc(st.author)}</div><h1 class="cover-title">${titleHTML(D.title || st.title)}</h1>
           <p class="byline">${D.tagline || ''}</p><p>${D.intro || ''}</p>
           ${st.warning ? `<span class="warn">🎃 ${st.warning}</span>` : ''}
           <button class="btn big" data-go="1">${t('start')}</button>
@@ -177,17 +179,17 @@
       const s = S.get();
       if (OH.panel) OH.panel.applyGlobal();
       stage.dataset.submode = lang.sub ? s.subMode : 'hidden';
-      stage.dataset.pinyin = lang.main === 'zh' ? s.pinyin : 'off';
+      stage.dataset.pinyin = LINGO.get(lang.main).annotate === 'pinyin' ? s.pinyin : 'off';
       stage.dataset.view = s.view;
       document.documentElement.lang = lang.main;
-      $('#bookTitle').textContent = `${clean((dataOf(lang.main) || dataOf('es')).title || st.title)} · ${st.author}`;
-      document.title = `${clean((dataOf(lang.main) || dataOf('es')).title || st.title)} · open-histories`;
+      $('#bookTitle').textContent = `${clean((dataOf(lang.main) || dataOf(LINGO.base())).title || st.title)} · ${st.author}`;
+      document.title = `${clean((dataOf(lang.main) || dataOf(LINGO.base())).title || st.title)} · open-histories`;
       $('#backLink').textContent = t('back_shelf');
       prevB.textContent = t('prev'); nextB.textContent = t('next');
       sndB.textContent = (s.sound ? '🔊 ' : '🔇 ') + t('sound');
       [...dots.children].forEach((d, i) => d.setAttribute('aria-label', i === 0 ? t('cover') : i === pages.length - 1 ? t('quiz_title') : String(i)));
       const bar2 = $('#noteBar');
-      if (bar2) bar2.textContent = lang.notes.map(n => { const [, l] = n.split(':'); return t('lang_missing').replace('{lang}', t('lang_' + l)); }).join(' ');
+      if (bar2) bar2.textContent = lang.notes.map(n => { const [, l] = n.split(':'); return t('lang_missing').replace('{lang}', LINGO.get(l).name || l); }).join(' ');
       if (bar2) bar2.hidden = !lang.notes.length;
     }
     function updateNum() {
@@ -217,7 +219,7 @@
     });
     function toggleWord(el) {
       if (!OH.words) return;
-      const D = dataOf('zh'); const g = D && D.glossary && D.glossary[+el.dataset.g]; if (!g) return;
+      const D = LINGO.annotated().map(dataOf).find(x => x && x.glossary); const g = D && D.glossary && D.glossary[+el.dataset.g]; if (!g) return;
       const key = OH.words.key(st.id, g.h);
       if (OH.words.has(key)) { OH.words.remove(key); el.classList.remove('saved'); }
       else { OH.words.add({ id: st.id, h: g.h, py: g.py || '', es: g.es || '', en: g.en || '' }); el.classList.add('saved'); }
@@ -226,10 +228,10 @@
       try {
         const sy = window.speechSynthesis; if (!sy) return;
         if (speaking) { stopVoice(); return; }
-        const D = dataOf(lang.main) || dataOf('es'), ES = dataOf('es');
+        const D = dataOf(lang.main) || dataOf(LINGO.base()), ES = dataOf(LINGO.base());
         const pg = (D.pages || [])[cur - 1] || ES.pages[cur - 1];
         const u = new SpeechSynthesisUtterance(pg.text.map(x => String(x).replace(/\{\{(.+?)\|.+?\}\}/g, '$1').replace(/<[^>]+>/g, '')).join(' '));
-        u.lang = TTS[lang.main] || 'es-ES'; u.rate = S.get().rate;
+        u.lang = ttsFor(lang.main); u.rate = S.get().rate;
         u.onend = u.onerror = () => { speaking = false; btn.textContent = t('listen'); };
         speaking = true; btn.textContent = t('stop'); sy.speak(u);
       } catch (_) {}
@@ -247,7 +249,7 @@
         if (btn.classList.contains('playing')) { stopVoice(); return; }
         stopVoice();
         const u = new SpeechSynthesisUtterance(studyText.get(btn.dataset.say) || '');
-        u.lang = TTS[lang.main] || 'es-ES'; u.rate = S.get().rate;
+        u.lang = ttsFor(lang.main); u.rate = S.get().rate;
         u.onend = u.onerror = () => { speaking = false; btn.textContent = '▶'; btn.classList.remove('playing'); };
         speaking = true; btn.textContent = '⏹'; btn.classList.add('playing'); sy.speak(u);
       } catch (_) {}

@@ -11,3 +11,4 @@ Servir el repo (`python -m http.server 8777`) y abrir:
 6. `read.html?s=fixture-mini&base=tests/fixtures/&view=study&lang=zh&pinyin=always` → página en frases: pinyin siempre visible, un ▶ por frase (al tocar suena y pasa a ⏹; al cambiar de página se corta y vuelve a ▶) y bloque de traducción por párrafo.
 7. `read.html?s=perico-conejo&view=study&lang=es&sub=en` → frases en español + traducción por párrafo; con `view=read` la lectura de párrafos queda intacta.
 8. El conmutador [Lectura|Estudio] de la fila de herramientas y la fila "Modo de lectura" de la ruedita cambian el modo; se recuerda al recargar.
+9. Registro de idiomas: el lector resuelve idiomas con `OH.lingo` (langs.js carga antes que settings.js); si un cuento no tiene un idioma, el aviso muestra su nombre endónimo del registro (no una clave).

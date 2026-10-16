@@ -33,6 +33,7 @@
 </p>
 
 <script src="stories/catalog.js"></script>
+<script src="assets/langs.js"></script>
 <script src="assets/settings.js"></script>
 <script src="assets/i18n.js"></script>
 <script src="assets/words.js"></script>
@@ -42,7 +43,7 @@
 <script>
 /* catálogo de la repisa. soon:true = todavía no está en la repisa */
 const lang = () => OH.settings.get().lang;
-const toBook = b => ({ id: b.id, t: b.title[lang()] || b.title.es, a: b.author, y: b.year, c: b.cover.color, tip: b.tip, e: b.cover.emblem, soon: b.soon, dark: b.shelf === 'terror', age: b.age >= 12 });
+const toBook = b => ({ id: b.id, t: b.title[lang()] || b.title[(OH.lingo && OH.lingo.base()) || 'es'], a: b.author, y: b.year, c: b.cover.color, tip: b.tip, e: b.cover.emblem, soon: b.soon, dark: b.shelf === 'terror', age: b.age >= 12 });
 const E = {
   rabbit:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#bfe3ff"/><path d="M0,86 Q60,66 120,86 V112 H0Z" fill="#7fbf6e"/><polygon points="20,86 36,40 52,86" fill="#3d7d5a"/><ellipse cx="78" cy="84" rx="20" ry="15" fill="#b9926a"/><circle cx="92" cy="68" r="11" fill="#b9926a"/><ellipse cx="88" cy="46" rx="4" ry="15" fill="#b9926a"/><ellipse cx="97" cy="47" rx="4" ry="15" fill="#b9926a" transform="rotate(10 97 47)"/><path d="M62,82 Q66,66 80,70 L82,92 Q64,94 62,82Z" fill="#2e5fbf"/><circle cx="96" cy="66" r="2" fill="#3a2a1a"/></svg>`,
   giant:`<svg viewBox="0 0 120 112"><rect width="120" height="112" fill="#d8f0ff"/><path d="M0,88 Q60,70 120,88 V112 H0Z" fill="#8fcf7a"/><g fill="#e8a9b8"><circle cx="24" cy="62" r="18"/><circle cx="104" cy="66" r="16"/></g><rect x="21" y="70" width="6" height="26" fill="#7a5230"/><rect x="101" y="74" width="6" height="24" fill="#7a5230"/><path d="M46,100 L52,52 H78 L84,100Z" fill="#7a4fa0"/><circle cx="65" cy="42" r="13" fill="#f0c8a0"/><path d="M52,44 Q52,66 65,68 Q78,66 78,44 Q72,56 65,56 Q58,56 52,44Z" fill="#8b6a43"/></svg>`,
